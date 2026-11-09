@@ -449,40 +449,40 @@
     "message": "快速上手"
   },
   "helpStep1": {
-    "message": "选择一个服务预设（或自定义），填入 endpoint、API Key 和 model。"
+    "message": "在「接入」选择服务预设。预设会填入接口协议、Endpoint 和 Model。自定义服务请选 Custom，填写服务端提供的接口地址和模型 ID。"
   },
   "helpStep2": {
-    "message": "点击「测试连接」确认可用，选择目标语言和显示模式，然后保存。"
+    "message": "把服务商控制台创建的密钥粘贴到 API Key。本机免鉴权服务可留空。要更改默认的简体中文，打开「翻译」修改「目标语言」。"
   },
   "helpStep3": {
-    "message": "在任意网页，可用右下角悬浮「译」按钮、工具栏弹窗、右键菜单或 Alt+T 翻译。"
+    "message": "点右上角「测试连接」。看到测试译文后点「保存配置」，等到出现「配置已保存」。"
   },
   "helpStep4": {
-    "message": "选中文本会出现划词气泡，或按 Alt+S 翻译选中内容。"
+    "message": "打开一篇外语网页，点右下角「译」或按 Alt+T。译文会出现在原文下方，再按一次还原。macOS 对应 Option+T。"
   },
   "helpStep5": {
-    "message": "开启自动翻译（悬浮按钮上的「A」），滚动时会自动翻译新段落。"
+    "message": "只想翻一句时，选中文字，点「翻译选中文本」或按 Alt+S（macOS 为 Option+S）。可在结果面板复制或朗读译文。"
   },
   "helpTipsTitle": {
     "message": "小贴士"
   },
   "helpTipSites": {
-    "message": "按站点规则：对指定网站设置总是翻译或从不翻译。"
+    "message": "要在某个网站边滚动边翻译，打开扩展弹窗，开启标有该域名的「自动翻译」。"
   },
   "helpTipGlossary": {
-    "message": "术语表：固定某些术语的译法。"
+    "message": "在「翻译」的术语表中每行写一组词，例如 cache=缓存。"
   },
   "helpTipCache": {
-    "message": "翻译结果会缓存以加速，可随时在下方清空缓存。"
+    "message": "在「翻译」的「缓存」区可以查看用量或清空已保存的译文。"
   },
   "helpShortcuts": {
     "message": "快捷键：Alt+T 翻译/还原页面 · Alt+S 翻译选中。其余可在 chrome://extensions/shortcuts 设置。"
   },
   "setupHint": {
-    "message": "👋 先在下方填写 endpoint、API Key 和 model，并测试连接，即可开始使用。"
+    "message": "首次使用时，选择服务预设并填写凭据，点「测试连接」，看到译文后点「保存配置」。"
   },
   "popupNeedSetup": {
-    "message": "请先在设置中配置 API，然后开始翻译。"
+    "message": "点右上角齿轮，在「接入」配置翻译服务，测试连接后保存。"
   },
   "labelPending": {
     "message": "翻译中…"

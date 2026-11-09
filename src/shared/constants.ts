@@ -71,8 +71,8 @@ export const PROVIDER_PRESETS: Record<Exclude<ProviderId, "custom">, ProviderPre
     id: "deepseek",
     name: "DeepSeek",
     protocol: "openai",
-    endpoint: "https://api.deepseek.com/v1",
-    models: ["deepseek-chat"],
+    endpoint: "https://api.deepseek.com/chat/completions",
+    models: ["deepseek-flash", "deepseek-v4-pro"],
   },
   zhipu: {
     id: "zhipu",

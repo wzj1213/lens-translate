@@ -449,40 +449,40 @@
     "message": "Getting started"
   },
   "helpStep1": {
-    "message": "Pick a provider preset (or Custom) and paste your endpoint, API key and model."
+    "message": "Under Access, choose a provider preset to fill in the protocol, endpoint and model. For a custom service, choose Custom and enter its API endpoint and model ID."
   },
   "helpStep2": {
-    "message": "Click “Test connection” to verify, choose a target language and display mode, then Save."
+    "message": "Paste a key from your provider’s API dashboard. Leave this field blank for a local service that runs without authentication. To change the default target language, Simplified Chinese, open Translate."
   },
   "helpStep3": {
-    "message": "On any page, translate with the floating 译 button, this toolbar popup, the right-click menu, or Alt+T."
+    "message": "Click Test connection. When the sample translation appears, click Save settings and wait for the saved confirmation."
   },
   "helpStep4": {
-    "message": "Select text for a quick translate bubble, or press Alt+S to translate the selection."
+    "message": "Open a page in a different language. Click the floating translation button or press Alt+T (Option+T on macOS). Press the shortcut again to restore the original."
   },
   "helpStep5": {
-    "message": "Turn on auto-translate (the “A” on the floating button) to translate paragraphs as you scroll."
+    "message": "To translate a passage, select it and click Translate selection, or press Alt+S (Option+S on macOS). Copy the result or use the read-aloud button."
   },
   "helpTipsTitle": {
     "message": "Tips"
   },
   "helpTipSites": {
-    "message": "Per-site rules: always or never translate specific websites."
+    "message": "To translate new paragraphs as you scroll on a site, open the extension popup and turn on Auto-translate for the displayed domain."
   },
   "helpTipGlossary": {
-    "message": "Glossary: pin how specific terms should be translated."
+    "message": "Under Translate, add one glossary entry per line, for example cache=缓存."
   },
   "helpTipCache": {
-    "message": "Translations are cached for speed — clear the cache anytime below."
+    "message": "Open the Cache section under Translate to check usage or clear saved translations."
   },
   "helpShortcuts": {
     "message": "Shortcuts: Alt+T translate/restore page · Alt+S translate selection. Assign the rest at chrome://extensions/shortcuts."
   },
   "setupHint": {
-    "message": "👋 Set your endpoint, API key and model below, then Test connection to get started."
+    "message": "Choose a provider and enter its credentials. Click Test connection, then Save settings when the sample translation appears."
   },
   "popupNeedSetup": {
-    "message": "Set up your API in Settings to start translating."
+    "message": "Use the settings gear to configure a translation provider. Test the connection and save your settings."
   },
   "labelPending": {
     "message": "Translating…"
