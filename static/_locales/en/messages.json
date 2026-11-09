@@ -1,0 +1,538 @@
+{
+  "extName": {
+    "message": "Lens Translate"
+  },
+  "extDescription": {
+    "message": "Translate web pages and selections with your own AI provider. Read bilingually or enable automatic translation for individual sites."
+  },
+  "actionTitle": {
+    "message": "Lens Translate"
+  },
+  "cmdTogglePage": {
+    "message": "Translate / restore the current page"
+  },
+  "cmdSelection": {
+    "message": "Translate the selected text"
+  },
+  "cmdAuto": {
+    "message": "Toggle automatic translation"
+  },
+  "cmdInput": {
+    "message": "Translate the focused input box"
+  },
+  "cmdRestore": {
+    "message": "Restore the original text"
+  },
+  "appName": {
+    "message": "Lens Translate"
+  },
+  "translatePage": {
+    "message": "Translate this page"
+  },
+  "translating": {
+    "message": "Translating…"
+  },
+  "showOriginal": {
+    "message": "Show original"
+  },
+  "translateSelection": {
+    "message": "Translate selection"
+  },
+  "autoTranslate": {
+    "message": "Auto-translate"
+  },
+  "autoOn": {
+    "message": "Auto-translate is on"
+  },
+  "autoOff": {
+    "message": "Auto-translate is off"
+  },
+  "floatingBubble": {
+    "message": "Floating button"
+  },
+  "enableBubble": {
+    "message": "Enable floating button"
+  },
+  "disableBubble": {
+    "message": "Disable floating button"
+  },
+  "autoOnHost": {
+    "message": "Auto-translate on for $HOST$",
+    "placeholders": {
+      "host": {
+        "content": "$1"
+      }
+    }
+  },
+  "autoOffHost": {
+    "message": "Auto-translate off for $HOST$",
+    "placeholders": {
+      "host": {
+        "content": "$1"
+      }
+    }
+  },
+  "bubbleAuto": {
+    "message": "Auto"
+  },
+  "bubbleMode": {
+    "message": "View"
+  },
+  "bubbleClose": {
+    "message": "Hide"
+  },
+  "stateOn": {
+    "message": "on"
+  },
+  "stateOff": {
+    "message": "off"
+  },
+  "modeShortBilingual": {
+    "message": "bilingual"
+  },
+  "modeShortReplace": {
+    "message": "translation"
+  },
+  "restoreOriginal": {
+    "message": "Restore original"
+  },
+  "stopTranslation": {
+    "message": "Stop"
+  },
+  "openOptions": {
+    "message": "Settings"
+  },
+  "statusReady": {
+    "message": "Ready."
+  },
+  "statusSending": {
+    "message": "Sending command…"
+  },
+  "thisSite": {
+    "message": "This site"
+  },
+  "siteDefault": {
+    "message": "Default"
+  },
+  "siteAlways": {
+    "message": "Always translate"
+  },
+  "siteNever": {
+    "message": "Never translate"
+  },
+  "unsupportedPage": {
+    "message": "This page does not allow content scripts."
+  },
+  "optionsTitle": {
+    "message": "Lens Translate settings"
+  },
+  "optionsSubtitle": {
+    "message": "Configure your translation provider, target language and reading preferences."
+  },
+  "sectionApi": {
+    "message": "API"
+  },
+  "sectionTranslation": {
+    "message": "Translation"
+  },
+  "sectionDisplay": {
+    "message": "Appearance"
+  },
+  "sectionAuto": {
+    "message": "Automatic translation"
+  },
+  "sectionPerformance": {
+    "message": "Speed & concurrency"
+  },
+  "sectionCache": {
+    "message": "Cache"
+  },
+  "sectionSites": {
+    "message": "Per-site rules"
+  },
+  "sectionData": {
+    "message": "Backup"
+  },
+  "labelProvider": {
+    "message": "Provider preset"
+  },
+  "labelProtocol": {
+    "message": "API protocol"
+  },
+  "protocolOpenai": {
+    "message": "OpenAI compatible"
+  },
+  "protocolAnthropic": {
+    "message": "Anthropic (Claude)"
+  },
+  "labelEndpoint": {
+    "message": "Endpoint"
+  },
+  "labelApiKey": {
+    "message": "API key"
+  },
+  "labelModel": {
+    "message": "Model"
+  },
+  "hintEndpoint": {
+    "message": "Anthropic: use the base URL (https://api.anthropic.com) and pick the Anthropic protocol. For Kimi/Moonshot use the Open Platform base URL, not Kimi Code /coding/v1."
+  },
+  "hintApiKey": {
+    "message": "Stored locally in this browser only and sent solely to your endpoint."
+  },
+  "labelTargetLang": {
+    "message": "Target language"
+  },
+  "labelSourceSkip": {
+    "message": "Skip text already in the target language"
+  },
+  "labelTranslateUiText": {
+    "message": "Translate UI text too — nav, sidebar, buttons (replaced in place, not bilingual)"
+  },
+  "labelGlossary": {
+    "message": "Glossary (one term=translation per line)"
+  },
+  "hintGlossary": {
+    "message": "Optional. The model is asked to honor these term translations."
+  },
+  "labelDisplayMode": {
+    "message": "Display mode"
+  },
+  "displayBilingual": {
+    "message": "Bilingual"
+  },
+  "displayReplace": {
+    "message": "Translation only"
+  },
+  "labelColor": {
+    "message": "Translation color"
+  },
+  "colorGreen": {
+    "message": "Green"
+  },
+  "colorBlack": {
+    "message": "Black"
+  },
+  "colorBlue": {
+    "message": "Blue"
+  },
+  "colorPurple": {
+    "message": "Purple"
+  },
+  "colorAmber": {
+    "message": "Amber"
+  },
+  "labelTheme": {
+    "message": "Interface theme"
+  },
+  "themeSystem": {
+    "message": "System"
+  },
+  "themeLight": {
+    "message": "Light"
+  },
+  "themeDark": {
+    "message": "Dark"
+  },
+  "labelAutoTranslate": {
+    "message": "Auto-translate every site by default (override per site in the popup)"
+  },
+  "labelFloatingBubble": {
+    "message": "Show the floating button on pages"
+  },
+  "labelBatchSize": {
+    "message": "Max paragraphs per auto pass"
+  },
+  "labelPrefetch": {
+    "message": "Prefetch below the fold"
+  },
+  "prefetchHalf": {
+    "message": "Half screen"
+  },
+  "prefetchOne": {
+    "message": "One screen"
+  },
+  "prefetchOneHalf": {
+    "message": "One and a half"
+  },
+  "prefetchTwo": {
+    "message": "Two screens"
+  },
+  "labelDebounce": {
+    "message": "Scroll trigger delay (ms)"
+  },
+  "labelMaxSegments": {
+    "message": "Max paragraphs per manual run"
+  },
+  "labelConcurrency": {
+    "message": "Max concurrent requests"
+  },
+  "labelBatchItems": {
+    "message": "Max paragraphs per request"
+  },
+  "labelBatchChars": {
+    "message": "Max characters per request"
+  },
+  "labelTimeout": {
+    "message": "Request timeout (ms)"
+  },
+  "labelTemperature": {
+    "message": "Temperature"
+  },
+  "labelCacheEnabled": {
+    "message": "Cache translations"
+  },
+  "labelCacheTtl": {
+    "message": "Cache retention (days)"
+  },
+  "labelCacheLimit": {
+    "message": "Max cached entries"
+  },
+  "cacheStats": {
+    "message": "Cached: $COUNT$ entries, ~$SIZE$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "size": {
+        "content": "$2"
+      }
+    }
+  },
+  "btnClearCache": {
+    "message": "Clear cache"
+  },
+  "cacheCleared": {
+    "message": "Cache cleared."
+  },
+  "sitesEmpty": {
+    "message": "No per-site rules yet. Add a hostname rule below."
+  },
+  "sitesAddPlaceholder": {
+    "message": "example.com"
+  },
+  "btnAddRule": {
+    "message": "Add rule"
+  },
+  "ruleAuto": {
+    "message": "Auto"
+  },
+  "ruleAlways": {
+    "message": "Always"
+  },
+  "ruleNever": {
+    "message": "Never"
+  },
+  "ruleRemove": {
+    "message": "Remove"
+  },
+  "btnTest": {
+    "message": "Test connection"
+  },
+  "btnSave": {
+    "message": "Save settings"
+  },
+  "btnExport": {
+    "message": "Export settings"
+  },
+  "btnImport": {
+    "message": "Import settings"
+  },
+  "statusSaved": {
+    "message": "Settings saved."
+  },
+  "statusTesting": {
+    "message": "Testing connection…"
+  },
+  "testOk": {
+    "message": "Connection OK. Sample: $TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "importOk": {
+    "message": "Settings imported."
+  },
+  "importFail": {
+    "message": "Could not read that settings file."
+  },
+  "toastSubmitted": {
+    "message": "Submitted $N$ paragraphs, translating…",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastNoText": {
+    "message": "No translatable text found on this page."
+  },
+  "toastProgress": {
+    "message": "Translating $DONE$/$TOTAL$ (x$C$)",
+    "placeholders": {
+      "done": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "c": {
+        "content": "$3"
+      }
+    }
+  },
+  "toastComplete": {
+    "message": "Translated $DONE$/$TOTAL$",
+    "placeholders": {
+      "done": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "toastStopped": {
+    "message": "Translation stopped."
+  },
+  "toastRestored": {
+    "message": "Original text restored."
+  },
+  "toastRetrying": {
+    "message": "Request failed, retrying…"
+  },
+  "toastFailed": {
+    "message": "Translation failed."
+  },
+  "toastCopied": {
+    "message": "Translation copied."
+  },
+  "toastCopyFailed": {
+    "message": "Copy failed — select the text manually."
+  },
+  "toastContextInvalid": {
+    "message": "Extension was reloaded. Reload this page, then translate again."
+  },
+  "toastNeedConfig": {
+    "message": "Set an API endpoint and model in Settings first."
+  },
+  "errKimiCoding": {
+    "message": "This endpoint/model is Kimi Code (for coding agents only). Use the Moonshot Open Platform base URL (e.g. https://api.moonshot.cn/v1) and a matching API key."
+  },
+  "panelTitle": {
+    "message": "Selection"
+  },
+  "panelTranslating": {
+    "message": "Translating…"
+  },
+  "panelFromCache": {
+    "message": "From cache"
+  },
+  "panelTranslated": {
+    "message": "Translated"
+  },
+  "panelCopy": {
+    "message": "Copy"
+  },
+  "panelSpeak": {
+    "message": "Speak"
+  },
+  "panelClose": {
+    "message": "Close"
+  },
+  "helpTitle": {
+    "message": "How to use"
+  },
+  "helpStepsTitle": {
+    "message": "Getting started"
+  },
+  "helpStep1": {
+    "message": "Pick a provider preset (or Custom) and paste your endpoint, API key and model."
+  },
+  "helpStep2": {
+    "message": "Click “Test connection” to verify, choose a target language and display mode, then Save."
+  },
+  "helpStep3": {
+    "message": "On any page, translate with the floating 译 button, this toolbar popup, the right-click menu, or Alt+T."
+  },
+  "helpStep4": {
+    "message": "Select text for a quick translate bubble, or press Alt+S to translate the selection."
+  },
+  "helpStep5": {
+    "message": "Turn on auto-translate (the “A” on the floating button) to translate paragraphs as you scroll."
+  },
+  "helpTipsTitle": {
+    "message": "Tips"
+  },
+  "helpTipSites": {
+    "message": "Per-site rules: always or never translate specific websites."
+  },
+  "helpTipGlossary": {
+    "message": "Glossary: pin how specific terms should be translated."
+  },
+  "helpTipCache": {
+    "message": "Translations are cached for speed — clear the cache anytime below."
+  },
+  "helpShortcuts": {
+    "message": "Shortcuts: Alt+T translate/restore page · Alt+S translate selection. Assign the rest at chrome://extensions/shortcuts."
+  },
+  "setupHint": {
+    "message": "👋 Set your endpoint, API key and model below, then Test connection to get started."
+  },
+  "popupNeedSetup": {
+    "message": "Set up your API in Settings to start translating."
+  },
+  "labelPending": {
+    "message": "Translating…"
+  },
+  "labelError": {
+    "message": "Failed"
+  },
+  "badge": {
+    "message": "ZH"
+  },
+  "navAccess": {
+    "message": "Access"
+  },
+  "navTranslate": {
+    "message": "Translate"
+  },
+  "navData": {
+    "message": "Backup"
+  },
+  "navHelp": {
+    "message": "Help"
+  },
+  "cmdSelectionToolbar": {
+    "message": "Open selection toolbar"
+  },
+  "selectionToolbarLabel": {
+    "message": "Selection toolbar on this site"
+  },
+  "selectionToolbarAuto": {
+    "message": "Auto"
+  },
+  "selectionToolbarManual": {
+    "message": "Manual"
+  },
+  "selectionToolbarOff": {
+    "message": "Off"
+  },
+  "selectionToolbarAutoHint": {
+    "message": "Show when text is selected; stay out of editable areas."
+  },
+  "selectionToolbarManualHint": {
+    "message": "Select text, then use the button below or the context menu. A shortcut can be assigned in Chrome."
+  },
+  "selectionToolbarOffHint": {
+    "message": "Hide the selection toolbar on this site. You can still translate a selection with the keyboard shortcut."
+  },
+  "selectionToolbarSaved": {
+    "message": "Saved for this site only"
+  },
+  "selectionToolbarDisabled": {
+    "message": "The selection toolbar is off on this site. Choose Manual or Auto in the extension popup first."
+  }
+}

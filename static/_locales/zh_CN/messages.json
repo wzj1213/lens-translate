@@ -1,0 +1,538 @@
+{
+  "extName": {
+    "message": "Lens 双语翻译"
+  },
+  "extDescription": {
+    "message": "用自己的 AI 服务翻译网页与选中文本，支持双语对照和按站点自动翻译。"
+  },
+  "actionTitle": {
+    "message": "Lens 双语翻译"
+  },
+  "cmdTogglePage": {
+    "message": "翻译 / 还原当前页面"
+  },
+  "cmdSelection": {
+    "message": "翻译选中文本"
+  },
+  "cmdAuto": {
+    "message": "开关自动翻译"
+  },
+  "cmdInput": {
+    "message": "翻译当前输入框"
+  },
+  "cmdRestore": {
+    "message": "恢复原文"
+  },
+  "appName": {
+    "message": "Lens 双语翻译"
+  },
+  "translatePage": {
+    "message": "翻译当前页面"
+  },
+  "translating": {
+    "message": "翻译中…"
+  },
+  "showOriginal": {
+    "message": "显示原文"
+  },
+  "translateSelection": {
+    "message": "翻译选中文本"
+  },
+  "autoTranslate": {
+    "message": "自动翻译"
+  },
+  "autoOn": {
+    "message": "自动翻译已开启"
+  },
+  "autoOff": {
+    "message": "自动翻译已关闭"
+  },
+  "floatingBubble": {
+    "message": "悬浮按钮"
+  },
+  "enableBubble": {
+    "message": "启用悬浮按钮"
+  },
+  "disableBubble": {
+    "message": "禁用悬浮按钮"
+  },
+  "autoOnHost": {
+    "message": "已为 $HOST$ 开启自动翻译",
+    "placeholders": {
+      "host": {
+        "content": "$1"
+      }
+    }
+  },
+  "autoOffHost": {
+    "message": "已为 $HOST$ 关闭自动翻译",
+    "placeholders": {
+      "host": {
+        "content": "$1"
+      }
+    }
+  },
+  "bubbleAuto": {
+    "message": "自动"
+  },
+  "bubbleMode": {
+    "message": "显示"
+  },
+  "bubbleClose": {
+    "message": "关闭"
+  },
+  "stateOn": {
+    "message": "开"
+  },
+  "stateOff": {
+    "message": "关"
+  },
+  "modeShortBilingual": {
+    "message": "双语"
+  },
+  "modeShortReplace": {
+    "message": "仅译文"
+  },
+  "restoreOriginal": {
+    "message": "恢复原文"
+  },
+  "stopTranslation": {
+    "message": "停止"
+  },
+  "openOptions": {
+    "message": "设置"
+  },
+  "statusReady": {
+    "message": "准备就绪。"
+  },
+  "statusSending": {
+    "message": "正在发送指令…"
+  },
+  "thisSite": {
+    "message": "当前网站"
+  },
+  "siteDefault": {
+    "message": "默认"
+  },
+  "siteAlways": {
+    "message": "总是翻译"
+  },
+  "siteNever": {
+    "message": "从不翻译"
+  },
+  "unsupportedPage": {
+    "message": "当前页面不支持内容脚本。"
+  },
+  "optionsTitle": {
+    "message": "Lens 双语翻译设置"
+  },
+  "optionsSubtitle": {
+    "message": "配置翻译服务、目标语言和阅读偏好。"
+  },
+  "sectionApi": {
+    "message": "API"
+  },
+  "sectionTranslation": {
+    "message": "翻译"
+  },
+  "sectionDisplay": {
+    "message": "外观"
+  },
+  "sectionAuto": {
+    "message": "自动翻译"
+  },
+  "sectionPerformance": {
+    "message": "速度与并发"
+  },
+  "sectionCache": {
+    "message": "缓存"
+  },
+  "sectionSites": {
+    "message": "按站点规则"
+  },
+  "sectionData": {
+    "message": "备份"
+  },
+  "labelProvider": {
+    "message": "服务预设"
+  },
+  "labelProtocol": {
+    "message": "接口协议"
+  },
+  "protocolOpenai": {
+    "message": "OpenAI 兼容"
+  },
+  "protocolAnthropic": {
+    "message": "Anthropic（Claude）"
+  },
+  "labelEndpoint": {
+    "message": "Endpoint"
+  },
+  "labelApiKey": {
+    "message": "API Key"
+  },
+  "labelModel": {
+    "message": "Model"
+  },
+  "hintEndpoint": {
+    "message": "Anthropic：填基础地址（https://api.anthropic.com）并选择 Anthropic 协议。Kimi/Moonshot 请使用 Open Platform 地址，不要使用 Kimi Code 的 /coding/v1。"
+  },
+  "hintApiKey": {
+    "message": "仅保存在本浏览器本地，且只发送到你配置的接口。"
+  },
+  "labelTargetLang": {
+    "message": "目标语言"
+  },
+  "labelSourceSkip": {
+    "message": "跳过已是目标语言的文本"
+  },
+  "labelTranslateUiText": {
+    "message": "同时翻译界面文字 —— 导航、侧边栏、按钮（就地替换，不做双语）"
+  },
+  "labelGlossary": {
+    "message": "术语表（每行 原文=译文）"
+  },
+  "hintGlossary": {
+    "message": "可选。模型会尽量遵循这些术语译法。"
+  },
+  "labelDisplayMode": {
+    "message": "显示模式"
+  },
+  "displayBilingual": {
+    "message": "双语对照"
+  },
+  "displayReplace": {
+    "message": "仅显示译文"
+  },
+  "labelColor": {
+    "message": "译文颜色"
+  },
+  "colorGreen": {
+    "message": "绿色"
+  },
+  "colorBlack": {
+    "message": "黑色"
+  },
+  "colorBlue": {
+    "message": "蓝色"
+  },
+  "colorPurple": {
+    "message": "紫色"
+  },
+  "colorAmber": {
+    "message": "琥珀色"
+  },
+  "labelTheme": {
+    "message": "界面主题"
+  },
+  "themeSystem": {
+    "message": "跟随系统"
+  },
+  "themeLight": {
+    "message": "浅色"
+  },
+  "themeDark": {
+    "message": "深色"
+  },
+  "labelAutoTranslate": {
+    "message": "所有网站默认开启自动翻译（可在弹窗中按站点覆盖）"
+  },
+  "labelFloatingBubble": {
+    "message": "在网页上显示悬浮按钮"
+  },
+  "labelBatchSize": {
+    "message": "每次自动翻译最多段落"
+  },
+  "labelPrefetch": {
+    "message": "向下预取范围"
+  },
+  "prefetchHalf": {
+    "message": "半屏"
+  },
+  "prefetchOne": {
+    "message": "一屏"
+  },
+  "prefetchOneHalf": {
+    "message": "一屏半"
+  },
+  "prefetchTwo": {
+    "message": "两屏"
+  },
+  "labelDebounce": {
+    "message": "滚动触发延迟（毫秒）"
+  },
+  "labelMaxSegments": {
+    "message": "每次手动翻译最多段落"
+  },
+  "labelConcurrency": {
+    "message": "最大并发请求数"
+  },
+  "labelBatchItems": {
+    "message": "每次请求最多段落"
+  },
+  "labelBatchChars": {
+    "message": "每次请求最多字符"
+  },
+  "labelTimeout": {
+    "message": "请求超时（毫秒）"
+  },
+  "labelTemperature": {
+    "message": "采样温度"
+  },
+  "labelCacheEnabled": {
+    "message": "缓存翻译结果"
+  },
+  "labelCacheTtl": {
+    "message": "缓存保留天数"
+  },
+  "labelCacheLimit": {
+    "message": "最多缓存条数"
+  },
+  "cacheStats": {
+    "message": "已缓存 $COUNT$ 条，约 $SIZE$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "size": {
+        "content": "$2"
+      }
+    }
+  },
+  "btnClearCache": {
+    "message": "清空缓存"
+  },
+  "cacheCleared": {
+    "message": "缓存已清空。"
+  },
+  "sitesEmpty": {
+    "message": "还没有按站点规则。可在下方添加域名规则。"
+  },
+  "sitesAddPlaceholder": {
+    "message": "example.com"
+  },
+  "btnAddRule": {
+    "message": "添加规则"
+  },
+  "ruleAuto": {
+    "message": "自动"
+  },
+  "ruleAlways": {
+    "message": "总是"
+  },
+  "ruleNever": {
+    "message": "从不"
+  },
+  "ruleRemove": {
+    "message": "删除"
+  },
+  "btnTest": {
+    "message": "测试连接"
+  },
+  "btnSave": {
+    "message": "保存配置"
+  },
+  "btnExport": {
+    "message": "导出配置"
+  },
+  "btnImport": {
+    "message": "导入配置"
+  },
+  "statusSaved": {
+    "message": "配置已保存。"
+  },
+  "statusTesting": {
+    "message": "正在测试连接…"
+  },
+  "testOk": {
+    "message": "连接正常，测试译文：$TEXT$",
+    "placeholders": {
+      "text": {
+        "content": "$1"
+      }
+    }
+  },
+  "importOk": {
+    "message": "配置已导入。"
+  },
+  "importFail": {
+    "message": "无法读取该配置文件。"
+  },
+  "toastSubmitted": {
+    "message": "已提交 $N$ 段，开始翻译…",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastNoText": {
+    "message": "当前页面没有找到可翻译文本。"
+  },
+  "toastProgress": {
+    "message": "翻译中 $DONE$/$TOTAL$（并发 $C$）",
+    "placeholders": {
+      "done": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "c": {
+        "content": "$3"
+      }
+    }
+  },
+  "toastComplete": {
+    "message": "翻译完成 $DONE$/$TOTAL$",
+    "placeholders": {
+      "done": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "toastStopped": {
+    "message": "已停止翻译。"
+  },
+  "toastRestored": {
+    "message": "已恢复原文。"
+  },
+  "toastRetrying": {
+    "message": "请求失败，准备重试…"
+  },
+  "toastFailed": {
+    "message": "翻译失败。"
+  },
+  "toastCopied": {
+    "message": "译文已复制。"
+  },
+  "toastCopyFailed": {
+    "message": "复制失败，请手动选择译文。"
+  },
+  "toastContextInvalid": {
+    "message": "扩展已重新加载。请刷新本页后再翻译。"
+  },
+  "toastNeedConfig": {
+    "message": "请先在设置中填写 API endpoint 和 model。"
+  },
+  "errKimiCoding": {
+    "message": "当前 endpoint/模型属于 Kimi Code（仅面向编码代理）。请改用 Moonshot Open Platform 的 Base URL（如 https://api.moonshot.cn/v1）和对应的 API Key。"
+  },
+  "panelTitle": {
+    "message": "划词翻译"
+  },
+  "panelTranslating": {
+    "message": "正在翻译…"
+  },
+  "panelFromCache": {
+    "message": "来自缓存"
+  },
+  "panelTranslated": {
+    "message": "已翻译"
+  },
+  "panelCopy": {
+    "message": "复制"
+  },
+  "panelSpeak": {
+    "message": "朗读"
+  },
+  "panelClose": {
+    "message": "关闭"
+  },
+  "helpTitle": {
+    "message": "使用说明"
+  },
+  "helpStepsTitle": {
+    "message": "快速上手"
+  },
+  "helpStep1": {
+    "message": "选择一个服务预设（或自定义），填入 endpoint、API Key 和 model。"
+  },
+  "helpStep2": {
+    "message": "点击「测试连接」确认可用，选择目标语言和显示模式，然后保存。"
+  },
+  "helpStep3": {
+    "message": "在任意网页，可用右下角悬浮「译」按钮、工具栏弹窗、右键菜单或 Alt+T 翻译。"
+  },
+  "helpStep4": {
+    "message": "选中文本会出现划词气泡，或按 Alt+S 翻译选中内容。"
+  },
+  "helpStep5": {
+    "message": "开启自动翻译（悬浮按钮上的「A」），滚动时会自动翻译新段落。"
+  },
+  "helpTipsTitle": {
+    "message": "小贴士"
+  },
+  "helpTipSites": {
+    "message": "按站点规则：对指定网站设置总是翻译或从不翻译。"
+  },
+  "helpTipGlossary": {
+    "message": "术语表：固定某些术语的译法。"
+  },
+  "helpTipCache": {
+    "message": "翻译结果会缓存以加速，可随时在下方清空缓存。"
+  },
+  "helpShortcuts": {
+    "message": "快捷键：Alt+T 翻译/还原页面 · Alt+S 翻译选中。其余可在 chrome://extensions/shortcuts 设置。"
+  },
+  "setupHint": {
+    "message": "👋 先在下方填写 endpoint、API Key 和 model，并测试连接，即可开始使用。"
+  },
+  "popupNeedSetup": {
+    "message": "请先在设置中配置 API，然后开始翻译。"
+  },
+  "labelPending": {
+    "message": "翻译中…"
+  },
+  "labelError": {
+    "message": "翻译失败"
+  },
+  "badge": {
+    "message": "译"
+  },
+  "navAccess": {
+    "message": "接入"
+  },
+  "navTranslate": {
+    "message": "翻译"
+  },
+  "navData": {
+    "message": "备份"
+  },
+  "navHelp": {
+    "message": "帮助"
+  },
+  "cmdSelectionToolbar": {
+    "message": "打开划词工具条"
+  },
+  "selectionToolbarLabel": {
+    "message": "本站划词工具条"
+  },
+  "selectionToolbarAuto": {
+    "message": "自动"
+  },
+  "selectionToolbarManual": {
+    "message": "手动"
+  },
+  "selectionToolbarOff": {
+    "message": "关闭"
+  },
+  "selectionToolbarAutoHint": {
+    "message": "选中文字时显示；在可编辑区域内不自动弹出。"
+  },
+  "selectionToolbarManualHint": {
+    "message": "选中文字后，用下方按钮或右键菜单打开。也可在扩展快捷键中设置。"
+  },
+  "selectionToolbarOffHint": {
+    "message": "在本站隐藏划词工具条。仍可用快捷键翻译选中的文字。"
+  },
+  "selectionToolbarSaved": {
+    "message": "已保存，仅对本站生效"
+  },
+  "selectionToolbarDisabled": {
+    "message": "本站已关闭划词工具条，请先在插件面板切换为手动或自动。"
+  }
+}

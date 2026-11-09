@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="optionsTitle">Lens Translate settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="header">
+        <div class="header-text">
+          <h1 data-i18n="optionsTitle">Lens Translate settings</h1>
+          <p data-i18n="optionsSubtitle">Configure your translation provider, target language and reading preferences.</p>
+        </div>
+        <div class="header-actions">
+          <button id="testButton" class="btn secondary" type="button" data-i18n="btnTest">Test connection</button>
+          <button id="saveButton" class="btn" type="submit" form="settingsForm" data-i18n="btnSave">Save settings</button>
+        </div>
+      </header>
+
+      <p id="status" class="status" role="status"></p>
+
+      <div id="setupHint" class="banner" hidden></div>
+
+
+      <div class="layout">
+        <nav class="side" id="sideNav">
+          <button type="button" class="nav-item" data-target="access" data-i18n="navAccess">access</button>
+          <button type="button" class="nav-item" data-target="translate" data-i18n="navTranslate">translate</button>
+          <button type="button" class="nav-item" data-target="data" data-i18n="navData">data</button>
+          <button type="button" class="nav-item" data-target="help" data-i18n="navHelp">帮助</button>
+        </nav>
+        <div class="panes">
+      <form id="settingsForm">
+        <section class="panel" data-panel="access">
+        <section class="card">
+          <h2 data-i18n="sectionApi">API</h2>
+          <div class="grid">
+            <label class="field">
+              <span data-i18n="labelProvider">Provider preset</span>
+              <select id="provider" name="provider"></select>
+            </label>
+            <label class="field">
+              <span data-i18n="labelProtocol">API protocol</span>
+              <select id="protocol" name="protocol">
+                <option value="openai" data-i18n="protocolOpenai">OpenAI compatible</option>
+                <option value="anthropic" data-i18n="protocolAnthropic">Anthropic (Claude)</option>
+              </select>
+            </label>
+            <label class="field span-2">
+              <span data-i18n="labelEndpoint">Endpoint</span>
+              <input id="endpoint" name="endpoint" type="url" placeholder="https://api.openai.com/v1" autocomplete="off" />
+              <small data-i18n="hintEndpoint"></small>
+            </label>
+            <label class="field">
+              <span data-i18n="labelApiKey">API key</span>
+              <input id="apiKey" name="apiKey" type="password" placeholder="sk-..." autocomplete="off" />
+              <small data-i18n="hintApiKey"></small>
+            </label>
+            <label class="field">
+              <span data-i18n="labelModel">Model</span>
+              <input id="model" name="model" type="text" list="modelList" placeholder="gpt-4o-mini" autocomplete="off" />
+              <datalist id="modelList"></datalist>
+            </label>
+          </div>
+        </section>
+        </section>
+        <section class="panel" data-panel="translate">
+        <section class="card">
+          <h2 data-i18n="sectionTranslation">Translation</h2>
+          <div class="grid">
+            <label class="field">
+              <span data-i18n="labelTargetLang">Target language</span>
+              <input id="targetLang" name="targetLang" type="text" list="langList" autocomplete="off" />
+              <datalist id="langList"></datalist>
+            </label>
+            <label class="field checkbox">
+              <input id="sourceSkip" name="sourceSkip" type="checkbox" />
+              <span data-i18n="labelSourceSkip">Skip text already in the target language</span>
+            </label>
+            <label class="field checkbox">
+              <input id="translateUiText" name="translateUiText" type="checkbox" />
+              <span data-i18n="labelTranslateUiText">Translate UI text too (nav, sidebar, buttons — replaced in place)</span>
+            </label>
+            <label class="field span-2">
+              <span data-i18n="labelGlossary">Glossary</span>
+              <textarea id="glossary" name="glossary" rows="3" placeholder="GPU=显卡&#10;cache=缓存"></textarea>
+              <small data-i18n="hintGlossary"></small>
+            </label>
+          </div>
+        </section>
+        <section class="card">
+          <h2 data-i18n="sectionDisplay">Appearance</h2>
+          <div class="grid">
+            <label class="field">
+              <span data-i18n="labelDisplayMode">Display mode</span>
+              <select id="displayMode" name="displayMode">
+                <option value="bilingual" data-i18n="displayBilingual">Bilingual</option>
+                <option value="replace" data-i18n="displayReplace">Translation only</option>
+              </select>
+            </label>
+            <label class="field">
+              <span data-i18n="labelColor">Translation color</span>
+              <select id="translationColor" name="translationColor">
+                <option value="green" data-i18n="colorGreen">Green</option>
+                <option value="black" data-i18n="colorBlack">Black</option>
+                <option value="blue" data-i18n="colorBlue">Blue</option>
+                <option value="purple" data-i18n="colorPurple">Purple</option>
+                <option value="amber" data-i18n="colorAmber">Amber</option>
+              </select>
+            </label>
+            <label class="field">
+              <span data-i18n="labelTheme">Interface theme</span>
+              <select id="theme" name="theme">
+                <option value="system" data-i18n="themeSystem">System</option>
+                <option value="light" data-i18n="themeLight">Light</option>
+                <option value="dark" data-i18n="themeDark">Dark</option>
+              </select>
+            </label>
+          </div>
+        </section>
+        <section class="card">
+          <h2 data-i18n="sectionAuto">Automatic translation</h2>
+          <div class="grid">
+            <label class="field checkbox">
+              <input id="autoTranslateEnabled" name="autoTranslateEnabled" type="checkbox" />
+              <span data-i18n="labelAutoTranslate">Translate new text while scrolling</span>
+            </label>
+            <label class="field checkbox">
+              <input id="floatingBubbleEnabled" name="floatingBubbleEnabled" type="checkbox" />
+              <span data-i18n="labelFloatingBubble">Show the floating button on pages</span>
+            </label>
+            <label class="field">
+              <span data-i18n="labelBatchSize">Max paragraphs per auto pass</span>
+              <input id="autoTranslateBatchSize" name="autoTranslateBatchSize" type="number" min="10" max="200" step="1" />
+            </label>
+            <label class="field">
+              <span data-i18n="labelPrefetch">Prefetch below the fold</span>
+              <select id="autoTranslatePrefetchScreens" name="autoTranslatePrefetchScreens">
+                <option value="0.5" data-i18n="prefetchHalf">Half screen</option>
+                <option value="1" data-i18n="prefetchOne">One screen</option>
+                <option value="1.5" data-i18n="prefetchOneHalf">One and a half</option>
+                <option value="2" data-i18n="prefetchTwo">Two screens</option>
+              </select>
+            </label>
+            <label class="field">
+              <span data-i18n="labelDebounce">Scroll trigger delay (ms)</span>
+              <input id="autoTranslateDebounceMs" name="autoTranslateDebounceMs" type="number" min="200" max="3000" step="1" />
+            </label>
+          </div>
+        </section>
+        <section class="card">
+          <h2 data-i18n="sectionPerformance">Speed &amp; concurrency</h2>
+          <div class="grid">
+            <label class="field">
+              <span data-i18n="labelMaxSegments">Max paragraphs per manual run</span>
+              <input id="maxSegments" name="maxSegments" type="number" min="50" max="1200" step="1" />
+            </label>
+            <label class="field">
+              <span data-i18n="labelConcurrency">Max concurrent requests</span>
+              <input id="maxConcurrency" name="maxConcurrency" type="number" min="1" max="24" step="1" />
+            </label>
+            <label class="field">
+              <span data-i18n="labelBatchItems">Max paragraphs per request</span>
+              <input id="batchMaxItems" name="batchMaxItems" type="number" min="4" max="100" step="1" />
+            </label>
+            <label class="field">
+              <span data-i18n="labelBatchChars">Max characters per request</span>
+              <input id="batchMaxChars" name="batchMaxChars" type="number" min="1000" max="16000" step="1" />
+            </label>
+            <label class="field">
+              <span data-i18n="labelTimeout">Request timeout (ms)</span>
+              <input id="requestTimeoutMs" name="requestTimeoutMs" type="number" min="8000" max="120000" step="1" />
+            </label>
+            <label class="field">
+              <span data-i18n="labelTemperature">Temperature</span>
+              <input id="temperature" name="temperature" type="number" min="0" max="2" step="any" />
+            </label>
+          </div>
+        </section>
+        <section class="card">
+          <h2 data-i18n="sectionCache">Cache</h2>
+          <div class="grid">
+            <label class="field checkbox">
+              <input id="cacheEnabled" name="cacheEnabled" type="checkbox" />
+              <span data-i18n="labelCacheEnabled">Cache translations</span>
+            </label>
+            <label class="field">
+              <span data-i18n="labelCacheTtl">Cache retention (days)</span>
+              <input id="cacheTtlDays" name="cacheTtlDays" type="number" min="1" max="365" step="1" />
+            </label>
+            <label class="field">
+              <span data-i18n="labelCacheLimit">Max cached entries</span>
+              <input id="cacheMaxEntries" name="cacheMaxEntries" type="number" min="500" max="50000" step="1" />
+            </label>
+            <div class="field cache-row">
+              <span id="cacheStats" class="muted"></span>
+              <button id="clearCache" class="btn secondary small" type="button" data-i18n="btnClearCache">Clear cache</button>
+            </div>
+          </div>
+        </section>
+        <section class="card">
+          <h2 data-i18n="sectionSites">Per-site rules</h2>
+          <div id="siteRules" class="site-rules"></div>
+          <div class="add-rule">
+            <input id="ruleHost" type="text" data-i18n-placeholder="sitesAddPlaceholder" placeholder="example.com" autocomplete="off" />
+            <select id="ruleMode">
+              <option value="auto" data-i18n="ruleAuto">Auto</option>
+              <option value="always" data-i18n="ruleAlways">Always</option>
+              <option value="never" data-i18n="ruleNever">Never</option>
+            </select>
+            <button id="addRule" class="btn secondary small" type="button" data-i18n="btnAddRule">Add rule</button>
+          </div>
+        </section>
+        </section>
+        <section class="panel" data-panel="data">
+        <section class="card">
+          <h2 data-i18n="sectionData">Backup</h2>
+          <div class="add-rule">
+            <button id="exportBtn" class="btn secondary small" type="button" data-i18n="btnExport">Export settings</button>
+            <button id="importBtn" class="btn secondary small" type="button" data-i18n="btnImport">Import settings</button>
+            <input id="importFile" type="file" accept="application/json" hidden />
+          </div>
+        </section>
+        </section>
+      </form>
+        <section class="panel" data-panel="help">
+      <div class="card help" open>
+        <h2 data-i18n="helpTitle">How to use</h2>
+        <div class="help-body">
+          <h3 data-i18n="helpStepsTitle">Getting started</h3>
+          <ol>
+            <li data-i18n="helpStep1"></li>
+            <li data-i18n="helpStep2"></li>
+            <li data-i18n="helpStep3"></li>
+            <li data-i18n="helpStep4"></li>
+            <li data-i18n="helpStep5"></li>
+          </ol>
+          <h3 data-i18n="helpTipsTitle">Tips</h3>
+          <ul>
+            <li data-i18n="helpTipSites"></li>
+            <li data-i18n="helpTipGlossary"></li>
+            <li data-i18n="helpTipCache"></li>
+          </ul>
+          <p class="muted" data-i18n="helpShortcuts"></p>
+        </div>
+      </div>
+        </section>
+        </div>
+      </div>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

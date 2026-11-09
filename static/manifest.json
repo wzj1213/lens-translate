@@ -1,0 +1,79 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
+  "version": "1.0.0",
+  "default_locale": "en",
+  "minimum_chrome_version": "114",
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "scripting",
+    "storage",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "service_worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "__MSG_actionTitle__",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content_script.js"
+      ],
+      "all_frames": false,
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "toggle-translate-page": {
+      "suggested_key": {
+        "default": "Alt+T"
+      },
+      "description": "__MSG_cmdTogglePage__"
+    },
+    "translate-selection": {
+      "suggested_key": {
+        "default": "Alt+S"
+      },
+      "description": "__MSG_cmdSelection__"
+    },
+    "toggle-auto-translate": {
+      "description": "__MSG_cmdAuto__"
+    },
+    "translate-input": {
+      "description": "__MSG_cmdInput__"
+    },
+    "restore-original": {
+      "description": "__MSG_cmdRestore__"
+    },
+    "show-selection-toolbar": {
+      "description": "__MSG_cmdSelectionToolbar__"
+    }
+  }
+}

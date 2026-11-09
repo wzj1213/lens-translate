@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+*.pem
+*.key
+*.crx
+.env
+.env.*
+lens-settings.json

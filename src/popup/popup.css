@@ -1,0 +1,331 @@
+/* ============================================================================
+   AI Bilingual Translator — popup
+   Ink + single accent (teal). The ONE primary CTA ("Translate this page")
+   carries the accent fill; everything else is ghost. Hierarchy from
+   size / color / spacing, not boldness.
+   ============================================================================ */
+
+:root {
+  --srf: #FFFFFF;
+  --srf-2: #FAFAF9;
+  --fg: #18181B;
+  --fg-2: #3F3F46;
+  --muted: #6B6B73;
+  --line: #E4E4E7;
+  --line-2: #D4D4D8;
+  --accent: #0F766E;
+  --accent-hover: #0B5E57;
+  --on-accent: #FFFFFF;
+  --danger: #B42318;
+
+  /* Accent FILL token: bright teal is text-only in dark, so fills stay #0F766E. */
+  --accent-fill: #0F766E;
+  --accent-fill-hover: #0B5E57;
+
+  --shadow: 0 1px 2px rgba(24,24,27,0.06), 0 8px 24px rgba(24,24,27,0.10);
+  --r-sm: 8px;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --srf: #1C1C1F;
+    --srf-2: #141416;
+    --fg: #FAFAF9;
+    --fg-2: #D4D4D8;
+    --muted: #A1A1AA;
+    --line: rgba(255,255,255,0.10);
+    --line-2: rgba(255,255,255,0.16);
+    --accent: #2DD4BF;
+    --accent-hover: #5EEAD4;
+    --danger: #FB7185;
+    --accent-fill: #0F766E;
+    --accent-fill-hover: #0B5E57;
+    --shadow: 0 1px 2px rgba(0,0,0,0.40), 0 8px 24px rgba(0,0,0,0.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --srf: #1C1C1F;
+  --srf-2: #141416;
+  --fg: #FAFAF9;
+  --fg-2: #D4D4D8;
+  --muted: #A1A1AA;
+  --line: rgba(255,255,255,0.10);
+  --line-2: rgba(255,255,255,0.16);
+  --accent: #2DD4BF;
+  --accent-hover: #5EEAD4;
+  --danger: #FB7185;
+  --accent-fill: #0F766E;
+  --accent-fill-hover: #0B5E57;
+  --shadow: 0 1px 2px rgba(0,0,0,0.40), 0 8px 24px rgba(0,0,0,0.45);
+  color-scheme: dark;
+}
+:root[data-theme="light"] { color-scheme: light; }
+
+* { box-sizing: border-box; }
+
+body {
+  width: 320px;
+  margin: 0;
+  background: var(--srf);
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.popup {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+
+/* ---- Header ---- */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+/* ---- Action stack ---- */
+.actions {
+  display: grid;
+  gap: 8px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Base button = ghost / hairline. Hierarchy comes from the accent fill on .primary. */
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 0 12px;
+  color: var(--fg-2);
+  background: var(--srf);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: border-color .13s var(--ease), color .13s var(--ease),
+              background-color .13s var(--ease), transform .12s var(--ease);
+}
+button:hover {
+  border-color: var(--line-2);
+  color: var(--fg);
+  background: var(--srf-2);
+}
+button:active { transform: translateY(1px); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* The single visual center: primary CTA */
+button.primary {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid transparent;
+  color: var(--on-accent);
+  background: var(--accent-fill);
+  font-weight: 600;
+  font-size: 14px;
+}
+button.primary:hover {
+  border-color: transparent;
+  color: var(--on-accent);
+  background: var(--accent-fill-hover);
+}
+button.primary:active { background: var(--accent-fill-hover); }
+button.primary:disabled { background: var(--accent-fill); }
+
+button.secondary { /* inherits ghost base */ }
+
+/* Danger — ghost; intent surfaces only on hover */
+button.danger {
+  color: var(--fg-2);
+  border-color: var(--line);
+}
+button.danger:hover {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--line));
+  background: var(--srf);
+}
+button.danger:active { background: var(--srf-2); }
+
+.icon-button {
+  width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 1px solid var(--line);
+  color: var(--fg-2);
+  background: var(--srf);
+  font-size: 15px;
+}
+
+/* ============================================================================
+   Settings panel — the switches that used to be buried in the options page.
+   One hairline card; rows read as label (left) + state (right).
+   ============================================================================ */
+.panel {
+  display: grid;
+  gap: 2px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.selection-policy {
+  display: grid;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.selection-heading { display: grid; gap: 4px; }
+.selection-scope {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.selection-modes { display: flex; }
+.selection-policy .selection-modes button { flex: 1; min-height: 32px; }
+.selection-hint {
+  margin: 0;
+  min-height: 36px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 2px;
+}
+.field-label {
+  color: var(--fg-2);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+/* Segmented control: the selected side takes the accent fill (one focal state). */
+.segmented {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--srf-2);
+}
+.segmented button {
+  min-height: 26px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.segmented button:hover { background: transparent; color: var(--fg); border-color: transparent; }
+.segmented button:active { transform: none; }
+.segmented button[data-active="true"] {
+  color: var(--on-accent);
+  background: var(--accent-fill);
+}
+.segmented button[data-active="true"]:hover { color: var(--on-accent); background: var(--accent-fill-hover); }
+
+/* Switch row — a full-width ghost button whose right edge is the track. */
+button.switch {
+  justify-content: space-between;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 2px;
+  border: none;
+  background: transparent;
+  color: var(--fg-2);
+  text-align: left;
+}
+button.switch:hover { background: transparent; border: none; color: var(--fg); }
+button.switch:active { transform: none; }
+button.switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--r-sm); }
+button.switch[disabled] { opacity: 0.45; }
+.switch-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.switch-sub {
+  font-size: 11px;
+  font-weight: 500;
+  max-width: 170px;
+}
+.track {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--line-2);
+  transition: background-color .15s var(--ease);
+}
+.thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--srf);
+  box-shadow: 0 1px 2px rgba(24,24,27,0.28);
+  transition: transform .15s var(--ease);
+}
+button.switch[data-on="true"] .track { background: var(--accent-fill); }
+button.switch[data-on="true"] .thumb { transform: translateX(14px); }
+
+.muted {
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Status line ---- */
+.status {
+  min-height: 16px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: -0.002em;
+}
+.status[data-tone="error"] { color: var(--danger); }
+.status[data-tone="success"] { color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  button:active { transform: none; }
+}

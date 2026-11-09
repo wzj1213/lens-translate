@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="appName">Lens Translate</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header>
+        <h1 data-i18n="appName">Lens Translate</h1>
+        <button id="openOptions" class="icon-button" type="button" data-i18n-title="openOptions" title="Settings">⚙</button>
+      </header>
+
+      <div class="actions">
+        <button id="translatePage" class="primary" type="button" data-i18n="translatePage">Translate this page</button>
+        <div class="row">
+          <button id="translateSelection" class="secondary" type="button" data-i18n="translateSelection">Translate selection</button>
+          <button id="restoreOriginal" class="secondary" type="button" data-i18n="restoreOriginal">Restore</button>
+        </div>
+      </div>
+
+      <section class="selection-policy" aria-labelledby="selectionPolicyLabel">
+        <div class="selection-heading">
+          <span id="selectionPolicyLabel" class="field-label" data-i18n="selectionToolbarLabel">Selection toolbar on this site</span>
+          <span id="selectionScope" class="selection-scope"></span>
+        </div>
+        <div class="segmented selection-modes" id="selectionToolbarMode" role="group" data-i18n-aria="selectionToolbarLabel" aria-describedby="selectionHint">
+          <button type="button" data-selection-mode="auto" aria-pressed="false" data-i18n="selectionToolbarAuto">Auto</button>
+          <button type="button" data-selection-mode="manual" aria-pressed="false" data-i18n="selectionToolbarManual">Manual</button>
+          <button type="button" data-selection-mode="off" aria-pressed="false" data-i18n="selectionToolbarOff">Off</button>
+        </div>
+        <p id="selectionHint" class="selection-hint"></p>
+        <button id="showSelectionToolbar" class="secondary" type="button" data-i18n="cmdSelectionToolbar">Open selection toolbar</button>
+      </section>
+
+      <div class="panel">
+        <div class="field">
+          <span class="field-label" data-i18n="labelDisplayMode">Display mode</span>
+          <div class="segmented" id="displayMode" role="group" data-i18n-aria="labelDisplayMode">
+            <button type="button" data-mode="bilingual" data-i18n="displayBilingual">Bilingual</button>
+            <button type="button" data-mode="replace" data-i18n="displayReplace">Translation only</button>
+          </div>
+        </div>
+
+        <button id="toggleAuto" class="switch" type="button" role="switch" aria-checked="false">
+          <span class="switch-text">
+            <span data-i18n="autoTranslate">Auto-translate</span>
+            <span id="autoScope" class="switch-sub muted" data-i18n="thisSite">This site</span>
+          </span>
+          <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+        </button>
+
+        <button id="toggleBubble" class="switch" type="button" role="switch" aria-checked="true">
+          <span class="switch-text">
+            <span data-i18n="floatingBubble">Floating button</span>
+          </span>
+          <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+        </button>
+      </div>
+
+      <button id="stopTranslation" class="danger" type="button" data-i18n="stopTranslation">Stop</button>
+
+      <p id="status" class="status" role="status"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

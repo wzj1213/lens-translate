@@ -1,0 +1,472 @@
+/* ============================================================================
+   AI Bilingual Translator — options
+   Ink + single accent (teal). "Save settings" (.btn) carries the accent fill;
+   "Test connection" and all utilities are ghost (.btn.secondary). Section
+   headings are small tracked muted micro-labels (NOT accent). Generous 8px
+   spatial rhythm; hierarchy from size / color / spacing, not boldness.
+   ============================================================================ */
+
+:root {
+  --bg: #FAFAF9;          /* page */
+  --srf: #FFFFFF;         /* cards */
+  --srf-2: #FAFAF9;       /* recessed blocks / site rules */
+  --fg: #18181B;
+  --fg-2: #3F3F46;
+  --muted: #6B6B73;
+  --line: #E4E4E7;
+  --line-2: #D4D4D8;
+  --input-bg: #FFFFFF;
+  --accent: #0F766E;
+  --accent-hover: #0B5E57;
+  --on-accent: #FFFFFF;
+  --danger: #B42318;
+
+  /* Accent FILL token: bright teal is text-only in dark, so fills stay #0F766E. */
+  --accent-fill: #0F766E;
+  --accent-fill-hover: #0B5E57;
+
+  --shadow: 0 1px 2px rgba(24,24,27,0.06), 0 8px 24px rgba(24,24,27,0.10);
+  --r-sm: 8px;
+  --r-lg: 12px;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141416;
+    --srf: #1C1C1F;
+    --srf-2: #141416;
+    --fg: #FAFAF9;
+    --fg-2: #D4D4D8;
+    --muted: #A1A1AA;
+    --line: rgba(255,255,255,0.10);
+    --line-2: rgba(255,255,255,0.16);
+    --input-bg: #141416;
+    --accent: #2DD4BF;
+    --accent-hover: #5EEAD4;
+    --danger: #FB7185;
+    --accent-fill: #0F766E;
+    --accent-fill-hover: #0B5E57;
+    --shadow: 0 1px 2px rgba(0,0,0,0.40), 0 8px 24px rgba(0,0,0,0.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141416;
+  --srf: #1C1C1F;
+  --srf-2: #141416;
+  --fg: #FAFAF9;
+  --fg-2: #D4D4D8;
+  --muted: #A1A1AA;
+  --line: rgba(255,255,255,0.10);
+  --line-2: rgba(255,255,255,0.16);
+  --input-bg: #141416;
+  --accent: #2DD4BF;
+  --accent-hover: #5EEAD4;
+  --danger: #FB7185;
+  --accent-fill: #0F766E;
+  --accent-fill-hover: #0B5E57;
+  --shadow: 0 1px 2px rgba(0,0,0,0.40), 0 8px 24px rgba(0,0,0,0.45);
+  color-scheme: dark;
+}
+:root[data-theme="light"] { color-scheme: light; }
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.shell {
+  width: min(900px, calc(100vw - 32px));
+  margin: 32px auto 64px;
+}
+
+/* ---- Header (sticky) ---- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 0 16px;
+  margin-bottom: 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.header-text h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  color: var(--fg);
+}
+.header-text p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.003em;
+}
+.header-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ---- Status ---- */
+.status {
+  min-height: 18px;
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.003em;
+}
+.status[data-tone="error"] { color: var(--danger); }
+.status[data-tone="success"] { color: var(--accent); }
+
+/* ---- Setup banner — ink card; a 2px MUTED side bar (::before). The accent is
+   reserved for the Save CTA + focus rings, so this standing chrome stays neutral. ---- */
+.banner {
+  position: relative;
+  margin: 0 0 16px;
+  padding: 12px 16px 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--srf);
+  color: var(--fg-2);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.banner::before {
+  content: "";
+  position: absolute; left: 0; top: 10px; bottom: 10px;
+  width: 2px; border-radius: 2px; background: var(--muted);
+}
+
+/* ---- Cards ---- */
+.card {
+  margin-bottom: 16px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--srf);
+}
+
+/* Section micro-labels: NOT accent — small, tracked, muted. */
+.card h2 {
+  margin: 0 0 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+
+/* ---- Help (collapsible; the .help card has no h2, so it manages its own padding) ---- */
+.help { padding: 0; }
+.help > summary {
+  list-style: none;
+  padding: 16px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--fg-2);
+  cursor: pointer;
+  transition: color .14s var(--ease);
+}
+.help > summary:hover { color: var(--fg); }
+.help > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--r-sm); }
+.help > summary::-webkit-details-marker { display: none; }
+.help > summary::before {
+  content: "›";
+  display: inline-block;
+  margin-right: 10px;
+  color: var(--muted);
+  transition: transform .15s var(--ease);
+}
+.help[open] > summary::before { transform: rotate(90deg); }
+.help-body {
+  padding: 0 24px 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--fg-2);
+}
+.help-body h3 {
+  margin: 12px 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.help-body ol,
+.help-body ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+.help-body li { margin-bottom: 5px; }
+
+/* ---- Field grid ---- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+}
+.field {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  align-content: start;
+}
+.field > span {
+  color: var(--fg-2);
+  letter-spacing: -0.003em;
+}
+.field.span-2 { grid-column: 1 / -1; }
+.field.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+}
+.field.checkbox span { color: var(--fg-2); }
+.field.checkbox input {
+  width: 17px;
+  height: 17px;
+  min-height: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.field small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.002em;
+}
+
+/* ---- Inputs ---- */
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 8px 11px;
+  color: var(--fg);
+  background: var(--input-bg);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.003em;
+  transition: border-color .13s var(--ease), box-shadow .13s var(--ease);
+}
+input::placeholder, textarea::placeholder { color: var(--muted); }
+select { cursor: pointer; }
+textarea {
+  min-height: 72px;
+  resize: vertical;
+  line-height: 1.55;
+}
+input:hover,
+select:hover,
+textarea:hover { border-color: var(--line-2); }
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* ---- Buttons: accent fill = Save (.btn); ghost = Test + all utilities (.btn.secondary) ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  padding: 0 18px;
+  color: var(--on-accent);
+  background: var(--accent-fill);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background-color .13s var(--ease), border-color .13s var(--ease),
+              color .13s var(--ease), transform .12s var(--ease);
+}
+.btn:hover { background: var(--accent-fill-hover); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.btn.secondary {
+  border: 1px solid var(--line);
+  color: var(--fg-2);
+  background: var(--srf);
+  font-weight: 500;
+}
+.btn.secondary:hover {
+  border-color: var(--line-2);
+  color: var(--fg);
+  background: var(--srf-2);
+}
+.btn.secondary:active { background: var(--srf-2); }
+.btn.small {
+  min-height: 34px;
+  padding: 0 13px;
+  font-size: 12px;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn:disabled:active { transform: none; }
+
+/* ---- Cache row (a .field, so resets grid display to flex) ---- */
+.cache-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Per-site rules ---- */
+.site-rules {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.site-rule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--srf-2);
+  transition: border-color .13s var(--ease);
+}
+.site-rule:hover { border-color: var(--line-2); }
+.site-rule .host {
+  flex: 1;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--fg);
+  letter-spacing: -0.003em;
+  word-break: break-all;
+}
+.site-rule select {
+  width: auto;
+  min-height: 34px;
+  background: var(--input-bg);
+}
+.site-empty {
+  color: var(--muted);
+  font-size: 13px;
+}
+.add-rule {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.add-rule input {
+  flex: 1;
+  min-width: 180px;
+}
+.add-rule select { width: auto; }
+
+/* ---- Responsive ---- */
+@media (max-width: 680px) {
+  .grid { grid-template-columns: 1fr; }
+  .header { flex-direction: column; }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  .btn:active, .help[open] > summary::before { transform: none; }
+}
+/* ============================================================================
+   分区布局：左侧导航 + 右侧面板
+   原来 9 张卡片堆在一页里，滚半天找不到东西。按功能归组后一屏一件事。
+   ============================================================================ */
+.layout {
+  display: grid;
+  grid-template-columns: 172px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.side {
+  position: sticky;
+  top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
+  appearance: none;
+  border: 0;
+  background: none;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--lens-fg-2);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover { background: var(--lens-srf-2); color: var(--lens-fg); }
+.nav-item[aria-current="true"] {
+  background: var(--lens-srf-2);
+  border-left-color: var(--lens-accent);
+  color: var(--lens-accent);
+  font-weight: 600;
+}
+
+.panes { min-width: 0; }
+.panel { display: none; }
+.panel.is-active { display: block; }
+/* 面板内的卡片之间留白，但不再需要外层再套一层边框 */
+.panel > .card + .card { margin-top: 16px; }
+
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; }
+  .side {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 4px;
+    padding-bottom: 4px;
+  }
+  .nav-item { white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; }
+  .nav-item[aria-current="true"] { border-left: 0; border-bottom-color: var(--lens-accent); }
+}
