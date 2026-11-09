@@ -1,3 +1,4 @@
+import type { ApiProtocol } from "./types";
 import { CACHE_PREFIX } from "./constants";
 import { normalizeEndpoint } from "./endpoint";
 import { parseGlossary } from "./prompt";
@@ -5,6 +6,7 @@ import { normalizeText } from "./util";
 
 export interface CacheKeyInput {
   endpoint: string;
+  protocol?: ApiProtocol;
   model: string;
   targetLang: string;
   glossary?: string;
@@ -31,7 +33,7 @@ function glossaryPart(glossary: string | undefined): string {
 export async function createCacheKey(input: CacheKeyInput, text: string): Promise<string> {
   const material =
     [
-      normalizeEndpoint(input.endpoint),
+      normalizeEndpoint(input.endpoint, input.protocol),
       String(input.model || "").trim(),
       String(input.targetLang || "").trim(),
       normalizeText(text),

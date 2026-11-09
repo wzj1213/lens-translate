@@ -335,6 +335,12 @@
   "btnExport": {
     "message": "Export settings"
   },
+  "labelExportKey": {
+    "message": "Include API key in the export (plain text)"
+  },
+  "toastInputChanged": {
+    "message": "The field changed during translation. Your edits have been kept."
+  },
   "btnImport": {
     "message": "Import settings"
   },

@@ -144,6 +144,7 @@ export class TranslationSession {
     const settings = this.settings!;
     const keyInput = {
       endpoint: settings.endpoint,
+      protocol: settings.protocol,
       model: settings.model,
       targetLang: settings.targetLang,
       glossary: settings.glossary,

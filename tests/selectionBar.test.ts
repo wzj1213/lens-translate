@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getSelectionInfo } from "@content/selection-util";
+import { getSelectionInfo, type SelectionInfo } from "@content/selection-util";
 import { SelectionBar } from "@content/selection-bar";
 
 let bar: SelectionBar;
-let action: ReturnType<typeof vi.fn>;
+let action: ReturnType<typeof vi.fn<(selection: SelectionInfo) => void>>;
 const visible = () => document.querySelector('.lens-selbar[data-visible="true"]');
 
 function select(selector = "p"): void {
@@ -57,8 +57,8 @@ describe("selection toolbar modes", () => {
     expect(buttons).toHaveLength(1);
     expect(buttons[0].textContent).toBe("translateSelection");
     buttons[0].click();
-    expect(visible()).toBeNull();
-    expect(action).toHaveBeenCalledWith(expect.objectContaining({ text: "Selected paragraph" }));
+    expect(visible()).not.toBeNull();
+    expect(action).not.toHaveBeenCalled();
     document.dispatchEvent(new KeyboardEvent("keyup", { key: "Escape" }));
     expect(visible()).toBeNull();
   });

@@ -113,7 +113,7 @@ chrome.runtime.onMessage.addListener((message: RuntimeRequest, sender, sendRespo
 });
 
 async function testConnection(overrides: Partial<Settings>): Promise<string> {
-  const settings = normalizeSettings({ ...(await loadSettings()), ...overrides });
+  const settings = normalizeSettings(overrides);
   if (!settings.endpoint) throw new Error(t("toastNeedConfig"));
   if (!settings.model) throw new Error(t("toastNeedConfig"));
 
@@ -202,6 +202,7 @@ async function runSelection(
     cache.setMaxEntries(settings.cacheMaxEntries);
     const keyInput = {
       endpoint: settings.endpoint,
+      protocol: settings.protocol,
       model: settings.model,
       targetLang: settings.targetLang,
       glossary: settings.glossary,

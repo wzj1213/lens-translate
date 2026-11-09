@@ -1,17 +1,9 @@
+import { httpOrigin as selectionOrigin } from "./endpoint";
 import type { SelectionToolbarMode, SelectionToolbarRule, Settings } from "./types";
 
-const MODES: readonly SelectionToolbarMode[] = ["auto", "manual", "off"];
+export { selectionOrigin };
 
-/** Keep ports separate: two applications on one host may own different selection UIs. */
-export function selectionOrigin(value: string | undefined): string {
-  try {
-    const url = new URL(value ?? "");
-    if (!/^https?:$/.test(url.protocol) || url.username || url.password) return "";
-    return url.origin;
-  } catch {
-    return "";
-  }
-}
+const MODES: readonly SelectionToolbarMode[] = ["auto", "manual", "off"];
 
 export function sanitizeSelectionToolbarRules(value: unknown): SelectionToolbarRule[] {
   if (!Array.isArray(value)) return [];

@@ -11,7 +11,8 @@ export function translateFocusedInput(): void {
     showToast(t("toastNoText"), "info", 2200);
     return;
   }
-  const text = readEditable(target).trim();
+  const original = readEditable(target);
+  const text = original.trim();
   if (!text) {
     showToast(t("toastNoText"), "info", 2200);
     return;
@@ -26,8 +27,13 @@ export function translateFocusedInput(): void {
       if (message.type === "DELTA") {
         full += message.chunk;
       } else if (message.type === "DONE") {
-        writeEditable(target, message.translated || full);
-        showToast(t("panelTranslated"), "success", 1800);
+        const translated = message.translated || full;
+        if (!target.isConnected || readEditable(target) !== original) {
+          showToast(t("toastInputChanged"), "info", 3000);
+        } else if (translated) {
+          writeEditable(target, translated);
+          showToast(t("panelTranslated"), "success", 1800);
+        }
         try {
           port.disconnect();
         } catch {

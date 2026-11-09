@@ -93,7 +93,7 @@ export const PROVIDER_PRESETS: Record<Exclude<ProviderId, "custom">, ProviderPre
     name: "Google Gemini (OpenAI compat)",
     protocol: "openai",
     endpoint: "https://generativelanguage.googleapis.com/v1beta/openai",
-    models: ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"],
+    models: ["gemini-3.5-flash-lite", "gemini-3.8-flash"],
   },
 };
 

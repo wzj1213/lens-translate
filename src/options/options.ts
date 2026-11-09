@@ -1,5 +1,7 @@
 import { DEFAULT_SETTINGS, PROVIDER_PRESETS, TARGET_LANGUAGES } from "@shared/constants";
 import { applyI18n, t } from "@shared/i18n";
+import { httpOrigin } from "@shared/endpoint";
+import { exportSettings, importSettings } from "./backup";
 import { sendToRuntime } from "@shared/messaging";
 import { loadSettings, normalizeSettings, saveSettings } from "@shared/settings";
 import { removeSiteRule, upsertSiteRule } from "@shared/siteRules";
@@ -8,6 +10,7 @@ import type { CacheStatsResponse, ProviderId, Settings, SiteRule, SiteRuleMode, 
 const form = document.getElementById("settingsForm") as HTMLFormElement;
 const statusEl = document.getElementById("status") as HTMLElement;
 let currentRules: SiteRule[] = [];
+let keyOrigin = "";
 
 function $(id: string): HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement {
   return document.getElementById(id) as never;
@@ -25,13 +28,13 @@ async function init(): Promise<void> {
   fillForm(settings);
   applyDocTheme(settings.theme);
   renderRules();
-  updateSetupHint();
   void refreshCacheStats();
 
   setupNav();
   form.addEventListener("submit", onSave);
   $("provider").addEventListener("change", onProviderChange);
-  $("endpoint").addEventListener("input", updateSetupHint);
+  $("endpoint").addEventListener("change", syncKeyOrigin);
+  $("apiKey").addEventListener("input", () => { keyOrigin = httpOrigin($("endpoint").value); });
   $("theme").addEventListener("change", () => applyDocTheme($("theme").value as ThemeMode));
   document.getElementById("testButton")!.addEventListener("click", onTest);
   document.getElementById("clearCache")!.addEventListener("click", onClearCache);
@@ -68,9 +71,17 @@ function onProviderChange(): void {
     populateDatalist("modelList", preset.models);
   }
   // "custom" keeps whatever protocol the user picked.
+  syncKeyOrigin();
+}
+
+function syncKeyOrigin(): void {
+  const origin = httpOrigin($("endpoint").value);
+  if (keyOrigin && keyOrigin !== origin) $("apiKey").value = "";
+  keyOrigin = origin;
 }
 
 function fillForm(settings: Settings): void {
+  keyOrigin = httpOrigin(settings.endpoint);
   for (const [key, value] of Object.entries(settings)) {
     if (key === "siteRules") continue;
     const input = form.elements.namedItem(key) as HTMLInputElement | null;
@@ -80,10 +91,11 @@ function fillForm(settings: Settings): void {
   }
   const preset = Object.values(PROVIDER_PRESETS).find((p) => p.id === settings.provider);
   populateDatalist("modelList", preset?.models ?? []);
-  updateSetupHint();
+  updateSetupHint(settings);
 }
 
 function readForm(): Record<string, unknown> {
+  syncKeyOrigin();
   const data: Record<string, unknown> = {};
   for (const key of Object.keys(DEFAULT_SETTINGS)) {
     if (key === "siteRules") continue;
@@ -100,6 +112,7 @@ async function onSave(event: Event): Promise<void> {
   // Preserve preferences managed by the popup, including per-origin selection rules.
   const settings = normalizeSettings({ ...(await loadSettings()), ...readForm() });
   await saveSettings(settings);
+  updateSetupHint(settings);
   applyDocTheme(settings.theme);
   setStatus(t("statusSaved"), "success");
 }
@@ -202,8 +215,9 @@ async function persistRules(): Promise<void> {
 // --- Import / export ---
 
 function onExport(): void {
+  const includeKey = $("exportKey").checked;
   void loadSettings().then((settings) => {
-    const blob = new Blob([JSON.stringify(settings, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(exportSettings(settings, includeKey), null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -219,8 +233,7 @@ async function onImport(event: Event): Promise<void> {
   input.value = "";
   if (!file) return;
   try {
-    const parsed = JSON.parse(await file.text()) as Partial<Settings>;
-    const settings = normalizeSettings(parsed);
+    const settings = importSettings(JSON.parse(await file.text()), await loadSettings());
     await saveSettings(settings);
     currentRules = settings.siteRules;
     fillForm(settings);
@@ -234,9 +247,9 @@ async function onImport(event: Event): Promise<void> {
 
 // --- Helpers ---
 
-function updateSetupHint(): void {
+function updateSetupHint(settings: Settings): void {
   const banner = document.getElementById("setupHint") as HTMLElement;
-  const configured = Boolean($("endpoint").value.trim());
+  const configured = Boolean(settings.endpoint);
   banner.hidden = configured;
   if (!configured) banner.textContent = t("setupHint");
 }

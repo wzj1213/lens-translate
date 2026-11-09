@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { requestTranslation } from "@features/translate/background/translator";
+import { requestTranslation, requestTranslationStream } from "@features/translate/background/translator";
 import { DEFAULT_SETTINGS } from "@shared/constants";
 import type { Settings } from "@shared/types";
 
@@ -25,6 +25,40 @@ function stubFetch(reply: string): { body: () => any } {
 }
 
 afterEach(() => vi.unstubAllGlobals());
+
+describe("compatible endpoints", () => {
+  it.each(["openai", "anthropic"] as const)("reads buffered JSON on streaming %s requests", async (protocol) => {
+    let reply = '{"items":[{"id":"1","translated":"你好"}]}';
+    const fetch = vi.fn(async (_url: string, init: RequestInit) => {
+      expect(init.redirect).toBe("error");
+      expect(init.credentials).toBe("omit");
+      expect(JSON.parse(String(init.body)).stream).toBe(true);
+      return Response.json(protocol === "anthropic"
+        ? { content: [{ type: "text", text: reply }] }
+        : { choices: [{ message: { content: reply } }] });
+    });
+    vi.stubGlobal("fetch", fetch);
+    const config = { ...settings, protocol };
+    const signal = new AbortController().signal;
+    const batch = await requestTranslation([{ id: "a", text: "Hello" }], config, signal, () => {});
+    expect(batch).toEqual([{ id: "a", translated: "你好" }]);
+    reply = "你好";
+    const delta = vi.fn();
+    expect(await requestTranslationStream("Hello", config, signal, delta)).toBe(reply);
+    expect(delta).toHaveBeenCalledExactlyOnceWith(reply);
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("also negotiates non-streaming responses when translating a selection", async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response("No streaming", { status: 422 }))
+      .mockResolvedValueOnce(Response.json({ choices: [{ message: { content: "你好" } }] }));
+    vi.stubGlobal("fetch", fetch);
+    const config = { ...settings, endpoint: "https://single.example/v1" };
+    expect(await requestTranslationStream("Hello", config, new AbortController().signal, () => {})).toBe("你好");
+    expect(fetch.mock.calls.map(([, init]) => JSON.parse(init.body).stream)).toEqual([true, false]);
+  });
+});
 
 describe("requestTranslation wire protocol", () => {
   const items = [

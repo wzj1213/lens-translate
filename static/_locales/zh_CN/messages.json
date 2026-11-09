@@ -335,6 +335,12 @@
   "btnExport": {
     "message": "导出配置"
   },
+  "labelExportKey": {
+    "message": "在导出文件中包含 API Key（明文）"
+  },
+  "toastInputChanged": {
+    "message": "翻译期间输入框内容已更改，已保留你的编辑。"
+  },
   "btnImport": {
     "message": "导入配置"
   },

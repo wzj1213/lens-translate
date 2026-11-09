@@ -18,17 +18,25 @@ export function normalizeEndpoint(
   endpoint: string | null | undefined,
   protocol: ApiProtocol = "openai",
 ): string {
-  const clean = String(endpoint ?? "").trim().replace(/\/+$/, "");
-  if (!clean) return "";
-  if (protocol === "anthropic") {
-    if (/\/messages$/i.test(clean)) return clean;
-    if (/\/v\d+$/i.test(clean)) return `${clean}/messages`;
-    return `${clean}/v1/messages`;
+  const raw = String(endpoint ?? "").trim();
+  const result = validateEndpointUrl(raw, { allowPrivate: true });
+  if (!result.ok) return raw;
+  const url = result.url;
+  const path = url.pathname.replace(/\/+$/, "");
+  const method = protocol === "anthropic" ? "/messages" : "/chat/completions";
+  if (path.toLowerCase().endsWith(method)) url.pathname = path;
+  else if (/\/v\d+$/i.test(path) || (protocol === "openai" && /\/openai$/i.test(path))) {
+    url.pathname = path + method;
+  } else {
+    url.pathname = path + "/v1" + method;
   }
-  if (/\/chat\/completions$/i.test(clean)) return clean;
-  if (/\/v\d+$/i.test(clean)) return `${clean}/chat/completions`;
-  if (/\/openai$/i.test(clean)) return `${clean}/chat/completions`;
-  return `${clean}/v1/chat/completions`;
+  url.hash = "";
+  return url.href;
+}
+
+export function httpOrigin(value: string | undefined): string {
+  const result = validateEndpointUrl(value ?? "", { allowPrivate: true });
+  return result.ok ? result.url.origin : "";
 }
 
 /**
@@ -48,6 +56,7 @@ export function validateEndpointUrl(
   if (url.protocol !== "http:" && url.protocol !== "https:") {
     return { ok: false, reason: "Endpoint must use http or https." };
   }
+  if (url.username || url.password) return { ok: false, reason: "Put credentials in the API Key field." };
   if (!options.allowPrivate && isPrivateHost(url.hostname)) {
     return { ok: false, reason: "Endpoint points to a private or loopback address." };
   }

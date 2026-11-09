@@ -107,15 +107,16 @@ async function readSseText(
   response: Response,
   protocol: ApiProtocol,
   onDelta: (chunk: string) => void,
+  stream: boolean,
 ): Promise<string> {
-  const reader = response.body?.getReader();
-  if (!reader) {
+  if (!stream || !response.body || /\bjson\b/i.test(response.headers?.get("content-type") ?? "")) {
     const data = await response.json();
     const full = extractTextContent(data).trim();
     if (full) onDelta(full);
     return full;
   }
 
+  const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
   let full = "";
@@ -151,9 +152,33 @@ async function readSseText(
  */
 const noStreamEndpoints = new Set<string>();
 
-function rejectsStreaming(error: unknown): boolean {
-  const status = (error as ApiError)?.status;
-  return status === 400 || status === 404 || status === 405 || status === 422 || status === 501;
+async function fetchCompletion(
+  endpoint: string,
+  messages: ChatMessage[],
+  settings: Settings,
+  signal: AbortSignal,
+  wantStream: boolean,
+  maxTokens: number,
+): Promise<{ response: Response; stream: boolean }> {
+  const send = (stream: boolean) => fetch(endpoint, {
+    method: "POST",
+    headers: authHeaders(settings),
+    body: JSON.stringify(buildRequestBody(messages, settings, { stream, maxTokens })),
+    signal,
+    redirect: "error",
+    credentials: "omit",
+  });
+  let stream = wantStream && !noStreamEndpoints.has(endpoint);
+  let response = await send(stream);
+  if (stream && [400, 404, 405, 422, 501].includes(response.status)) {
+    // Release the rejected response and remember the capability only if the retry works.
+    await response.body?.cancel();
+    stream = false;
+    response = await send(false);
+    if (response.ok) noStreamEndpoints.add(endpoint);
+  }
+  if (!response.ok) throw await toApiError(response, endpoint, settings.apiKey);
+  return { response, stream };
 }
 
 /** Translate a batch of items, returning [{id, translated}] for the ids that succeeded. */
@@ -185,35 +210,7 @@ export async function requestTranslation(
     context,
   });
 
-  const wantStream = Boolean(onPartial) && !noStreamEndpoints.has(endpoint);
-  try {
-    return await runBatch(endpoint, items, wire, messages, settings, parentSignal, wantStream, onPartial);
-  } catch (error) {
-    // Server does not implement streaming: remember it and redo this one batch
-    // without it, so the user never sees a failure for an unsupported feature.
-    if (wantStream && rejectsStreaming(error)) {
-      noStreamEndpoints.add(endpoint);
-      return runBatch(endpoint, items, wire, messages, settings, parentSignal, false, undefined);
-    }
-    throw error;
-  }
-}
-
-async function runBatch(
-  endpoint: string,
-  items: Segment[],
-  wire: Segment[],
-  messages: ChatMessage[],
-  settings: Settings,
-  parentSignal: AbortSignal,
-  stream: boolean,
-  onPartial: ((items: TranslatedItem[]) => void) | undefined,
-): Promise<TranslatedItem[]> {
   const abort = makeAbort(settings.requestTimeoutMs, parentSignal);
-  const body = buildRequestBody(messages, settings, {
-    stream,
-    maxTokens: anthropicBatchMaxTokens(settings),
-  });
 
   // Map a wire ordinal back to its real segment id, at most once.
   const seen = new Set<string>();
@@ -229,13 +226,9 @@ async function runBatch(
   };
 
   try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: authHeaders(settings),
-      body: JSON.stringify(body),
-      signal: abort.signal,
-    });
-    if (!response.ok) throw await toApiError(response, endpoint, settings.apiKey);
+    const { response, stream } = await fetchCompletion(
+      endpoint, messages, settings, abort.signal, Boolean(onPartial), anthropicBatchMaxTokens(settings),
+    );
 
     const delivered: TranslatedItem[] = [];
     let content: string;
@@ -248,7 +241,7 @@ async function runBatch(
         if (!ready.length) return;
         delivered.push(...ready);
         onPartial?.(ready);
-      });
+      }, stream);
     } else {
       content = extractTextContent(await response.json());
     }
@@ -297,18 +290,12 @@ export async function requestTranslationStream(
     glossary: settings.glossary,
     context,
   });
-  const body = buildRequestBody(messages, settings, { stream: true, maxTokens: 8192 });
 
   try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: authHeaders(settings),
-      body: JSON.stringify(body),
-      signal: abort.signal,
-    });
-    if (!response.ok) throw await toApiError(response, endpoint, settings.apiKey);
-
-    return await readSseText(response, settings.protocol, onDelta);
+    const { response, stream } = await fetchCompletion(endpoint, messages, settings, abort.signal, true, 8192);
+    const translated = await readSseText(response, settings.protocol, onDelta, stream);
+    if (!translated) throw new Error("The model returned an empty translation.");
+    return translated;
   } catch (error) {
     if (abort.timedOut()) throw timeoutError();
     throw error;

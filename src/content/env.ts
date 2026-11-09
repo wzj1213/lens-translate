@@ -1,5 +1,15 @@
 import { t } from "@shared/i18n";
 
+/** Page scripts share the DOM and can dispatch clicks on injected controls. */
+export function onUserClick(button: HTMLButtonElement, action: () => void): void {
+  button.addEventListener("click", (event) => {
+    if (!event.isTrusted) return;
+    event.preventDefault();
+    event.stopPropagation();
+    action();
+  });
+}
+
 export function isTopFrame(): boolean {
   try {
     return window.top === window;

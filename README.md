@@ -1,20 +1,16 @@
 # Lens Translate · 双语翻译
 
+[English quick start](README.en.md)
+
 在 Chrome 里读外语网页时，Lens 可以把译文放在每段原文下方。只想看懂一句话，就选中它单独翻译。翻译使用你自己的模型服务，既可以接云端 API，也可以接电脑上的本地模型。
 
 ## 安装到 Chrome
 
-如果手中已有包含 `manifest.json` 的 `dist/` 文件夹，可以直接从第 2 步开始。
-
-1. **从源码构建**。下载或克隆本仓库，在含有 `package.json` 的目录打开终端。如果电脑还没有 npm，可安装 Node.js 的 LTS 版本，它自带 npm。运行以下两条命令。[Node.js 下载](https://nodejs.org/zh-cn/download)
-
-   ```sh
-   npm ci
-   npm run build
-   ```
-
-2. **加载扩展**。使用 Chrome 114 或更高版本，在地址栏输入 `chrome://extensions`，打开「开发者模式」，点「加载已解压的扩展程序」，选中 `dist/`。列表中应出现「Lens 双语翻译」。
+1. **下载安装包并解压**。这个 ZIP 已经构建好，可以直接安装。将它解压到一个准备长期保留的文件夹，打开后应能看到 `manifest.json`。[下载 Lens Translate 1.0.0（ZIP）](downloads/lens-translate-1.0.0.zip?raw=true)
+2. **加载扩展**。使用 Chrome 114 或更高版本，在地址栏输入 `chrome://extensions`，打开右上角「开发者模式」，点「加载已解压的扩展程序」，选中刚才含有 `manifest.json` 的文件夹。列表中应出现「Lens 双语翻译」。
 3. **打开设置**。点 Chrome 工具栏的拼图图标，找到 Lens 并固定。点 Lens 图标，再点弹窗右上角的齿轮 ⚙。
+
+   <img src="docs/images/open-settings.png" width="320" alt="Lens 弹窗顶部，设置齿轮在标题右侧、翻译当前页面按钮上方">
 
 ## 第一次配置
 
@@ -75,9 +71,10 @@
 
 | 现象 | 可以检查什么 |
 | --- | --- |
-| 加载扩展时提示缺少清单文件 | 运行 `npm run build`，确认 `dist/manifest.json` 存在，然后在 Chrome 中选 `dist/`。 |
+| 加载扩展时提示缺少清单文件 | 确认下载的是上方的扩展安装包，已解压，并在文件选择器中选中了直接包含 `manifest.json` 的那一层。若下载的是仓库源码，按下方「开发与许可证」构建后选择 `dist/`。 |
 | 测试连接返回 `401` 或提示模型不存在 | 核对密钥是否属于所选服务商，Endpoint 是否是 API 地址，Model 是否与服务商列出的模型 ID 完全一致。 |
 | 测试成功，回到网页却仍提示配置 API | 回设置点「保存配置」，等到出现保存提示，再回网页重试。 |
+| 自建接口提示网络错误 | 检查服务是否运行，并填写最终的请求地址。扩展会拒绝 HTTP 重定向，避免密钥或网页内容被转发给其他地址。 |
 | `429` 或本机模型频繁超时 | 到「翻译 → 速度与并发」降低「最大并发请求数」。本机模型首次加载较慢时，也可以调高「请求超时（毫秒）」。 |
 | 页面没有出现译文 | 在普通 HTTP 或 HTTPS 网页上试一段外语正文。默认会跳过已是目标语言的文字。扩展重新加载后，先刷新原来打开的网页。 |
 
@@ -85,14 +82,21 @@
 
 扩展直接向所选模型接口发送待翻译的文字、目标语言和适用的术语，也可能附上页面标题和域名。自动翻译默认关闭。访问 HTTP 和 HTTPS 网站的权限用于读取网页文字、显示译文并连接配置的接口。
 
-设置、API Key 和译文缓存在当前浏览器保存。「设置 → 翻译 → 缓存」可以清空译文。「设置 → 备份」导出的 `lens-settings.json` 含已填写的 API Key，请作为私密文件保管。
+设置、API Key 和译文缓存在当前浏览器保存。右键菜单用于翻译选中文字，当前标签页和脚本权限用于在打开的页面显示翻译。扩展请求本地存储和扩展存储额度，用于保存设置和较大的译文缓存。「设置 → 翻译 → 缓存」可以清空译文。
+
+「设置 → 备份」默认导出偏好和站点规则。只有主动勾选「在导出文件中包含 API Key（明文）」才会把密钥写入 `lens-settings.json`。换设备恢复默认备份后，需要重新填写密钥。
 
 ## 开发与许可证
 
+从源码构建时，安装 Node.js 22.12+ 的 LTS 版本及自带的 npm，在仓库根目录运行以下命令。[Node.js 下载](https://nodejs.org/zh-cn/download)
+
 ```sh
+npm ci
+npm run build
 npm run typecheck
 npm test
-npm run watch
 ```
 
-修改代码后，在 `chrome://extensions` 的 Lens 卡片上点重新加载，再刷新测试网页。项目采用 [MIT 许可证](LICENSE)。
+在 Chrome 中加载生成的 `dist/`。开发时可运行 `npm run watch`，修改后在扩展卡片上点重新加载，再刷新测试网页。`npm run package` 会重新构建并在 `downloads/` 生成可分发的 ZIP。
+
+项目采用 [MIT 许可证](LICENSE)。

@@ -1,4 +1,5 @@
 import { t } from "@shared/i18n";
+import { onUserClick } from "@content/env";
 import type { SelectionToolbarMode } from "@shared/types";
 import { getSelectionInfo, isEditableSelection, isOwnUi, positionFloating, type SelectionInfo } from "@content/selection-util";
 
@@ -97,9 +98,7 @@ export class SelectionBar {
     button.type = "button";
     button.className = "lens-selbar-btn";
     button.textContent = t("translateSelection");
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
+    onUserClick(button, () => {
       const selection = this.info;
       this.hide();
       if (selection) this.translate(selection);

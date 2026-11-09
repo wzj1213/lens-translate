@@ -17,6 +17,13 @@ describe("createCacheKey", () => {
     expect(a).toBe(b);
   });
 
+  it("normalizes the path using the selected protocol", async () => {
+    const anthropic = { ...base, protocol: "anthropic" } as const;
+    const key = await createCacheKey(anthropic, "Hello");
+    expect(key).toBe(await createCacheKey({ ...anthropic, endpoint: base.endpoint + "/v1/messages" }, "Hello"));
+    expect(key).not.toBe(await createCacheKey(base, "Hello"));
+  });
+
   it("differs by model, target language and text", async () => {
     const a = await createCacheKey(base, "Hello");
     const b = await createCacheKey({ ...base, model: "m2" }, "Hello");

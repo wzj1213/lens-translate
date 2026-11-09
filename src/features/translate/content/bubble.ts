@@ -1,6 +1,7 @@
 import { t } from "@shared/i18n";
 import type { DisplayMode } from "@shared/types";
 import { injectStyles } from "@content/styles";
+import { onUserClick } from "@content/env";
 
 export interface BubbleHandlers {
   onTranslate(): void;
@@ -69,9 +70,7 @@ export class FloatingBubble {
     label.textContent = t("badge");
     main.appendChild(label);
 
-    main.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    onUserClick(main, () => {
       // Swallow the click synthesized at the end of a drag gesture.
       if (this.suppressClick) {
         this.suppressClick = false;
@@ -79,21 +78,9 @@ export class FloatingBubble {
       }
       this.handlers.onTranslate();
     });
-    autoBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.handlers.onToggleAuto();
-    });
-    modeBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.handlers.onToggleDisplayMode();
-    });
-    closeBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.handlers.onDisable();
-    });
+    onUserClick(autoBtn, () => this.handlers.onToggleAuto());
+    onUserClick(modeBtn, () => this.handlers.onToggleDisplayMode());
+    onUserClick(closeBtn, () => this.handlers.onDisable());
 
     this.attachDrag(main);
 
@@ -185,7 +172,7 @@ export class FloatingBubble {
 
   private attachDrag(main: HTMLButtonElement): void {
     main.addEventListener("pointerdown", (e) => {
-      if (e.button !== 0 || !this.wrap) return;
+      if (!e.isTrusted || e.button !== 0 || !this.wrap) return;
       this.suppressClick = false;
       this.pointerStart = { x: e.clientX, y: e.clientY };
       const rect = this.wrap.getBoundingClientRect();
@@ -198,7 +185,7 @@ export class FloatingBubble {
     });
 
     main.addEventListener("pointermove", (e) => {
-      if (!this.pointerStart || !this.originStart) return;
+      if (!e.isTrusted || !this.pointerStart || !this.originStart) return;
       const dx = e.clientX - this.pointerStart.x;
       const dy = e.clientY - this.pointerStart.y;
       if (!this.dragging && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
@@ -208,7 +195,7 @@ export class FloatingBubble {
     });
 
     const end = (e: PointerEvent) => {
-      if (!this.pointerStart) return;
+      if (!e.isTrusted || !this.pointerStart) return;
       try {
         main.releasePointerCapture(e.pointerId);
       } catch {

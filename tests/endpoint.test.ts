@@ -25,6 +25,13 @@ describe("normalizeEndpoint", () => {
     expect(normalizeEndpoint("https://api.example.com/v1/")).toBe("https://api.example.com/v1/chat/completions");
   });
 
+  it("preserves query parameters on a full or partial endpoint path", () => {
+    const full = "https://example.com/deployment/test/chat/completions?api-version=v1";
+    expect(normalizeEndpoint(full)).toBe(full);
+    expect(normalizeEndpoint("https://example.com/v1/?region=eu", "anthropic"))
+      .toBe("https://example.com/v1/messages?region=eu");
+  });
+
   it("handles the Gemini openai-compat suffix", () => {
     expect(normalizeEndpoint("https://x/v1beta/openai")).toBe("https://x/v1beta/openai/chat/completions");
   });

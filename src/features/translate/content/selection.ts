@@ -2,7 +2,7 @@ import { bcp47For } from "@shared/constants";
 import { t } from "@shared/i18n";
 import { SELECTION_PORT_NAME } from "@shared/messaging";
 import type { SelectionOutbound } from "@shared/types";
-import { ensureExtensionContext, formatContentError } from "@content/env";
+import { ensureExtensionContext, formatContentError, onUserClick } from "@content/env";
 import { injectStyles } from "@content/styles";
 import { getSelectionInfo, positionFloating } from "@content/selection-util";
 
@@ -207,7 +207,7 @@ function iconButton(label: string, onClick: () => void): HTMLButtonElement {
   button.className = "lens-icon-btn";
   button.textContent = label;
   button.title = label;
-  button.addEventListener("click", onClick);
+  onUserClick(button, onClick);
   return button;
 }
 
