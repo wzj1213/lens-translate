@@ -10,6 +10,7 @@ export interface CacheKeyInput {
   model: string;
   targetLang: string;
   glossary?: string;
+  context?: string;
 }
 
 /**
@@ -37,7 +38,7 @@ export async function createCacheKey(input: CacheKeyInput, text: string): Promis
       String(input.model || "").trim(),
       String(input.targetLang || "").trim(),
       normalizeText(text),
-    ].join("\n") + glossaryPart(input.glossary);
+    ].join("\n") + glossaryPart(input.glossary) + (input.context ? "\nc:" + input.context : "");
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(material));
   return CACHE_PREFIX + toHex(new Uint8Array(digest));
 }

@@ -3,7 +3,7 @@
     "message": "Lens 双语翻译"
   },
   "extDescription": {
-    "message": "用自己的 AI 服务翻译网页与选中文本，支持双语对照和按站点自动翻译。"
+    "message": "双语阅读网页、字幕、PDF 与图片。可用 Chrome 本机翻译，也可接入自己的 AI 模型。"
   },
   "actionTitle": {
     "message": "Lens 双语翻译"
@@ -130,7 +130,7 @@
     "message": "配置翻译服务、目标语言和阅读偏好。"
   },
   "sectionApi": {
-    "message": "API"
+    "message": "翻译引擎"
   },
   "sectionTranslation": {
     "message": "翻译"
@@ -181,7 +181,7 @@
     "message": "仅保存在本浏览器本地，且只发送到你配置的接口。"
   },
   "labelTargetLang": {
-    "message": "目标语言"
+    "message": "阅读目标语言"
   },
   "labelSourceSkip": {
     "message": "跳过已是目标语言的文本"
@@ -455,19 +455,19 @@
     "message": "快速上手"
   },
   "helpStep1": {
-    "message": "在「接入」选择服务预设。预设会填入接口协议、Endpoint 和 Model。自定义服务请选 Custom，填写服务端提供的接口地址和模型 ID。"
+    "message": "使用桌面 Chrome 138 或更高版本，在 HTTPS 网页点击「翻译本页」。首次使用某个语言对时，按提示下载语言包。"
   },
   "helpStep2": {
-    "message": "把服务商控制台创建的密钥粘贴到 API Key。本机免鉴权服务可留空。要更改默认的简体中文，打开「翻译」修改「目标语言」。"
+    "message": "使用云端或本地模型时，请在「接入」中选服务、填接口，测试连接后保存。"
   },
   "helpStep3": {
-    "message": "点右上角「测试连接」。看到测试译文后点「保存配置」，等到出现「配置已保存」。"
+    "message": "选中词语可以结合原句查看含义。内置引擎会分别翻译选词和原句。"
   },
   "helpStep4": {
-    "message": "打开一篇外语网页，点右下角「译」或按 Alt+T。译文会出现在原文下方，再按一次还原。macOS 对应 Option+T。"
+    "message": "把鼠标移到段落上，轻按 Alt（Mac 用 Option）翻译此段，再按一次收起。"
   },
   "helpStep5": {
-    "message": "只想翻一句时，选中文字，点「翻译选中文本」或按 Alt+S（macOS 为 Option+S）。可在结果面板复制或朗读译文。"
+    "message": "在「翻译」中分别设置阅读和写作语言。常用网站可以从扩展弹窗开启自动翻译。"
   },
   "helpTipsTitle": {
     "message": "小贴士"
@@ -485,10 +485,10 @@
     "message": "快捷键：Alt+T 翻译/还原页面 · Alt+S 翻译选中。其余可在 chrome://extensions/shortcuts 设置。"
   },
   "setupHint": {
-    "message": "首次使用时，选择服务预设并填写凭据，点「测试连接」，看到译文后点「保存配置」。"
+    "message": "当前使用 Chrome 内置翻译。可在安全网页上试用，或点「测试连接」检查本机支持情况。"
   },
   "popupNeedSetup": {
-    "message": "点右上角齿轮，在「接入」配置翻译服务，测试连接后保存。"
+    "message": "当前使用 Chrome 本机翻译。可在设置中配置模型，支持更多语言。"
   },
   "labelPending": {
     "message": "翻译中…"
@@ -540,5 +540,164 @@
   },
   "selectionToolbarDisabled": {
     "message": "本站已关闭划词工具条，请先在插件面板切换为手动或自动。"
+  },
+  "nativePack": {
+    "message": "下载 Chrome 的 $FROM$ → $TO$ 语言包？",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "nativeDownload": {
+    "message": "下载语言包"
+  },
+  "cancelAction": {
+    "message": "取消"
+  },
+  "nativeCancelled": {
+    "message": "已取消语言包下载。"
+  },
+  "nativeProgress": {
+    "message": "正在下载语言包… $PERCENT$%",
+    "placeholders": {
+      "percent": {
+        "content": "$1"
+      }
+    }
+  },
+  "nativeUnavailable": {
+    "message": "当前页面无法使用 Chrome 内置翻译。请在桌面 Chrome 138+ 的安全网页上重试，或在设置中配置模型。"
+  },
+  "nativePairUnavailable": {
+    "message": "这台设备的 Chrome 不支持该语言对。请更换目标语言，或在设置中配置模型。"
+  },
+  "inputRestored": {
+    "message": "已恢复原稿。"
+  },
+  "inputUndoHint": {
+    "message": "已翻译草稿。按 Esc 可恢复原稿。"
+  },
+  "undoWriting": {
+    "message": "恢复输入框原稿"
+  },
+  "captionsVideoOnly": {
+    "message": "请打开 YouTube 视频使用双语字幕。"
+  },
+  "captionsOn": {
+    "message": "已开启双语字幕。如果没有字幕，请在播放器中打开 CC。"
+  },
+  "captionsStart": {
+    "message": "开启双语字幕"
+  },
+  "captionsStop": {
+    "message": "关闭双语字幕"
+  },
+  "readerTitle": {
+    "message": "PDF 与图片阅读器"
+  },
+  "openReader": {
+    "message": "PDF 与图片阅读器"
+  },
+  "readerOpen": {
+    "message": "打开文件"
+  },
+  "readerStart": {
+    "message": "打开 PDF 后可点段落翻译，也可以打开图片识别文字。"
+  },
+  "readerPrev": {
+    "message": "上一页"
+  },
+  "readerNext": {
+    "message": "下一页"
+  },
+  "ocrLanguage": {
+    "message": "图片文字语言"
+  },
+  "ocrRead": {
+    "message": "重新识别"
+  },
+  "readerOriginal": {
+    "message": "原文"
+  },
+  "readerTranslate": {
+    "message": "翻译文字"
+  },
+  "readerResult": {
+    "message": "译文"
+  },
+  "ocrProgress": {
+    "message": "正在识别文字… $PERCENT$%",
+    "placeholders": {
+      "percent": {
+        "content": "$1"
+      }
+    }
+  },
+  "ocrLoading": {
+    "message": "正在本机识别图片文字…"
+  },
+  "ocrEmpty": {
+    "message": "未识别到文字。可以更换图片或识别语言。"
+  },
+  "readerLoading": {
+    "message": "正在打开文档…"
+  },
+  "readerPick": {
+    "message": "点击页面上的段落查看译文。"
+  },
+  "readerNoText": {
+    "message": "本页没有文字层。扫描页可以截成图片后使用文字识别。"
+  },
+  "readerTooLarge": {
+    "message": "请选择小于 100 MB 的 PDF 或小于 24 MB 的图片。"
+  },
+  "readerUseFile": {
+    "message": "无法直接读取这个资源。请先保存到本机，再点「打开文件」。"
+  },
+  "imageStart": {
+    "message": "右键点击网页图片，选择「识别并翻译图片」，也可以在此打开图片文件。"
+  },
+  "imageTitle": {
+    "message": "图片翻译"
+  },
+  "imageMenu": {
+    "message": "识别并翻译图片"
+  },
+  "nativeHint": {
+    "message": "Chrome 可在本机翻译受支持的语言。需要使用 AI 模型时，在下方填写接口并保存。"
+  },
+  "useNative": {
+    "message": "Chrome 内置翻译"
+  },
+  "writingLang": {
+    "message": "写作目标语言"
+  },
+  "hoverKey": {
+    "message": "悬停段落翻译键"
+  },
+  "maskSensitive": {
+    "message": "向模型发送前隐藏邮箱和电话号码"
+  },
+  "consistentTerms": {
+    "message": "为长网页生成共用术语表（多一次模型请求）"
+  },
+  "helpMedia": {
+    "message": "在 YouTube 打开 CC，再从弹窗开启双语字幕。PDF 从弹窗阅读器打开，网页图片可用右键菜单识别。"
+  },
+  "helpWriting": {
+    "message": "右键点输入框即可翻译草稿。开头写 /ja 加空格可临时译成日语，按 Esc 恢复该输入框上一次的原稿。"
+  },
+  "engineLabel": {
+    "message": "当前使用"
+  },
+  "useModel": {
+    "message": "配置的模型"
+  },
+  "nativePackFailed": {
+    "message": "Chrome 未能加载这个语言包。请检查网络后重试，或在设置中切换到配置的模型。"
   }
 }

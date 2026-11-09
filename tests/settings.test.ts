@@ -63,3 +63,11 @@ describe("publicSettings", () => {
     expect(JSON.stringify(pub)).not.toContain("sk-secret");
   });
 });
+
+it("migrates existing endpoints and keeps the saved provider when switching engines", () => {
+  expect(normalizeSettings({}).engine).toBe("chrome");
+  const old = normalizeSettings({ endpoint: "https://models.example/v1", apiKey: "test-key" });
+  expect(old.engine).toBe("model");
+  const local = normalizeSettings({ ...old, engine: "chrome" });
+  expect(local).toMatchObject({ engine: "chrome", endpoint: old.endpoint, apiKey: old.apiKey });
+});

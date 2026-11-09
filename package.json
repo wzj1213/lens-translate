@@ -1,6 +1,6 @@
 {
   "name": "lens-translate",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Chrome extension for bilingual page and selection translation.",
   "private": true,
   "type": "module",
@@ -23,5 +23,12 @@
     "typescript": "^5.7.3",
     "vitest": "^4.1.12"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@tesseract.js-data/chi_sim": "1.0.0",
+    "@tesseract.js-data/eng": "1.0.0",
+    "@tesseract.js-data/jpn": "1.0.0",
+    "pdfjs-dist": "6.5.438",
+    "tesseract.js": "7.0.0"
+  }
 }

@@ -29,12 +29,17 @@ export interface SiteRule {
 }
 
 export interface Settings {
+  engine: "chrome" | "model";
   provider: ProviderId;
   protocol: ApiProtocol;
   endpoint: string;
   apiKey: string;
   model: string;
   targetLang: string;
+  writingLang: string;
+  maskSensitive: boolean;
+  consistentTerms: boolean;
+  hoverKey: "Alt" | "Shift" | "off";
   sourceSkip: boolean;
   /** Translate article content only — skip nav / sidebar / header / footer / UI labels. */
   translateUiText: boolean;
@@ -95,6 +100,8 @@ export interface ProviderPreset {
 export interface PageContext {
   title: string;
   host: string;
+  sentence?: string;
+  topic?: string;
 }
 
 /** A unit of text to translate. ids are extension-generated, never page-supplied. */
@@ -132,11 +139,14 @@ export type ContentCommand =
   | "TOGGLE_AUTO"
   | "TOGGLE_DISPLAY_MODE"
   | "TRANSLATE_INPUT"
+  | "UNDO_INPUT"
+  | "TOGGLE_CAPTIONS"
   | "GET_STATUS";
 
 /** Live page state the popup renders (returned by GET_STATUS). */
 export interface PageStatus {
   active: boolean;
+  captions?: boolean;
   translated: number;
   busy: boolean;
   auto: boolean;
@@ -164,7 +174,7 @@ export interface CommandEnvelope {
 
 // --- Selection (streaming) port protocol ---
 
-export type SelectionInbound = { type: "TRANSLATE"; text: string };
+export type SelectionInbound = { type: "TRANSLATE"; text: string; targetLang?: string; sentence?: string };
 
 export type SelectionOutbound =
   | { type: "DELTA"; chunk: string }
@@ -174,7 +184,7 @@ export type SelectionOutbound =
 // --- Port (session) protocol ---
 
 export type PortInbound =
-  | { type: "START_TRANSLATION"; segments: Segment[] }
+  | { type: "START_TRANSLATION"; segments: Segment[]; sample?: string }
   /** Feed more segments into a run that is already in flight (no new round-trip stall). */
   | { type: "APPEND_SEGMENTS"; segments: Segment[] }
   | { type: "CANCEL_TRANSLATION" };

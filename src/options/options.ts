@@ -1,3 +1,4 @@
+import { nativeTranslate } from "@shared/nativeTranslator";
 import { DEFAULT_SETTINGS, PROVIDER_PRESETS, TARGET_LANGUAGES } from "@shared/constants";
 import { applyI18n, t } from "@shared/i18n";
 import { httpOrigin } from "@shared/endpoint";
@@ -32,6 +33,9 @@ async function init(): Promise<void> {
 
   setupNav();
   form.addEventListener("submit", onSave);
+  $("endpoint").addEventListener("input", () => {
+    if ($("endpoint").value.trim()) $("engine").value = "model";
+  });
   $("provider").addEventListener("change", onProviderChange);
   $("endpoint").addEventListener("change", syncKeyOrigin);
   $("apiKey").addEventListener("input", () => { keyOrigin = httpOrigin($("endpoint").value); });
@@ -60,6 +64,7 @@ function populateDatalist(id: string, values: readonly string[]): void {
 }
 
 function onProviderChange(): void {
+  $("engine").value = "model";
   const id = $("provider").value as ProviderId;
   const preset = id === "custom" ? null : PROVIDER_PRESETS[id];
   if (preset) {
@@ -123,6 +128,12 @@ async function onTest(): Promise<void> {
   button.disabled = true;
   setStatus(t("statusTesting"), "info");
   try {
+    if (settings.engine === "chrome") {
+      const sample = settings.targetLang === "English" || settings.targetLang === "en" ? "Bonjour tout le monde." : "Hello, this is a connection test.";
+      const result = await nativeTranslate(sample, settings.targetLang, sample.startsWith("Bonjour") ? "fr" : "en");
+      setStatus(t("testOk", result), "success");
+      return;
+    }
     const response = await sendToRuntime<{ ok: boolean; result?: string; error?: string }>({
       type: "TEST_CONNECTION",
       settings,
@@ -249,7 +260,7 @@ async function onImport(event: Event): Promise<void> {
 
 function updateSetupHint(settings: Settings): void {
   const banner = document.getElementById("setupHint") as HTMLElement;
-  const configured = Boolean(settings.endpoint);
+  const configured = settings.engine === "model";
   banner.hidden = configured;
   if (!configured) banner.textContent = t("setupHint");
 }

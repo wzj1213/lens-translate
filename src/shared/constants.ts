@@ -10,12 +10,17 @@ export const MEMORY_CACHE_LIMIT = 1500;
 export const CACHE_WRITE_CHUNK = 80;
 
 export const DEFAULT_SETTINGS: Settings = {
+  engine: "chrome",
   provider: "custom",
   protocol: "openai",
   endpoint: "",
   apiKey: "",
   model: "gpt-4o-mini",
   targetLang: "简体中文",
+  writingLang: "English",
+  maskSensitive: true,
+  consistentTerms: true,
+  hoverKey: "Alt",
   sourceSkip: true,
   translateUiText: true,
   glossary: "",

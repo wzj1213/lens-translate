@@ -1,56 +1,59 @@
 import { t } from "@shared/i18n";
-import { SELECTION_PORT_NAME } from "@shared/messaging";
-import type { SelectionOutbound } from "@shared/types";
-import { ensureExtensionContext, formatContentError } from "@content/env";
+import { translateText } from "@shared/translateText";
+import { loadSettings } from "@shared/settings";
+import { formatContentError } from "@content/env";
 import { showToast } from "@content/toast";
 
-/** Translate the text in the currently focused input / textarea / contenteditable. */
-export function translateFocusedInput(): void {
-  const target = findEditable(document.activeElement);
-  if (!target) {
-    showToast(t("toastNoText"), "info", 2200);
-    return;
-  }
-  const original = readEditable(target);
-  const text = original.trim();
-  if (!text) {
-    showToast(t("toastNoText"), "info", 2200);
-    return;
-  }
+type Edit = { original: string; translated: string; nodes?: Node[] };
+const edits = new WeakMap<HTMLElement, Edit>();
+const pending = new WeakMap<HTMLElement, AbortController>();
 
+export function undoInput(): boolean {
+  const el = findEditable(document.activeElement);
+  if (!el) return false;
+  const edit = edits.get(el);
+  if (!edit || readEditable(el) !== edit.translated) return false;
+  edits.delete(el);
+  if (edit.nodes) {
+    el.replaceChildren(...edit.nodes);
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  } else writeEditable(el, edit.original);
+  showToast(t("inputRestored"), "success", 1600);
+  return true;
+}
+
+export function inputUndoKey(event: KeyboardEvent): void {
+  if (event.isTrusted && event.key === "Escape" && undoInput()) event.preventDefault();
+}
+
+export async function translateFocusedInput(): Promise<void> {
+  const target = findEditable(document.activeElement);
+  if (!target) { showToast(t("toastNoText"), "info", 2200); return; }
+  const original = readEditable(target);
+  const prefix = original.match(/^\s*\/([a-z]{2,3}(?:-[a-z]{2,4})?)\s+/i);
+  const text = original.slice(prefix?.[0].length ?? 0).trim();
+  if (!text) { showToast(t("toastNoText"), "info", 2200); return; }
+
+  pending.get(target)?.abort();
+  const controller = new AbortController();
+  pending.set(target, controller);
   showToast(t("translating"), "info", 4000);
-  let full = "";
   try {
-    ensureExtensionContext();
-    const port = chrome.runtime.connect({ name: SELECTION_PORT_NAME });
-    port.onMessage.addListener((message: SelectionOutbound) => {
-      if (message.type === "DELTA") {
-        full += message.chunk;
-      } else if (message.type === "DONE") {
-        const translated = message.translated || full;
-        if (!target.isConnected || readEditable(target) !== original) {
-          showToast(t("toastInputChanged"), "info", 3000);
-        } else if (translated) {
-          writeEditable(target, translated);
-          showToast(t("panelTranslated"), "success", 1800);
-        }
-        try {
-          port.disconnect();
-        } catch {
-          /* gone */
-        }
-      } else if (message.type === "ERROR") {
-        showToast(message.message, "error", 4000);
-        try {
-          port.disconnect();
-        } catch {
-          /* gone */
-        }
-      }
-    });
-    port.postMessage({ type: "TRANSLATE", text });
+    const settings = await loadSettings();
+    const translated = await translateText(text, { settings, targetLang: prefix?.[1] || settings.writingLang,
+      sourceHint: "", signal: controller.signal });
+    if (controller.signal.aborted) return;
+    if (!target.isConnected || readEditable(target) !== original) {
+      showToast(t("toastInputChanged"), "info", 3000);
+    } else if (translated) {
+      edits.set(target, { original, translated, nodes: target.isContentEditable ? Array.from(target.childNodes) : undefined });
+      writeEditable(target, translated);
+      showToast(t("inputUndoHint"), "success", 3200);
+    }
   } catch (error) {
-    showToast(formatContentError(error), "error", 4000);
+    if (!controller.signal.aborted) showToast(formatContentError(error), "error", 4000);
+  } finally {
+    if (pending.get(target) === controller) pending.delete(target);
   }
 }
 
@@ -64,7 +67,7 @@ function findEditable(node: Element | null): HTMLElement | null {
 
 function readEditable(el: HTMLElement): string {
   if (el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement) return el.value;
-  return el.textContent ?? "";
+  return el.innerText ?? el.textContent ?? "";
 }
 
 function writeEditable(el: HTMLElement, text: string): void {
@@ -79,7 +82,7 @@ function writeEditable(el: HTMLElement, text: string): void {
     el.dispatchEvent(new Event("input", { bubbles: true }));
     el.dispatchEvent(new Event("change", { bubbles: true }));
   } else {
-    el.textContent = text;
+    el.innerText = text;
     el.dispatchEvent(new Event("input", { bubbles: true }));
   }
 }

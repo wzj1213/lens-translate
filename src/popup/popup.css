@@ -329,3 +329,5 @@ button.switch[data-on="true"] .thumb { transform: translateX(14px); }
   * { transition: none !important; }
   button:active { transform: none; }
 }
+
+[hidden] { display: none !important; }

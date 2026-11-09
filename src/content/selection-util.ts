@@ -3,6 +3,7 @@ import { normalizeText } from "@shared/util";
 export interface SelectionInfo {
   text: string;
   rect: DOMRect;
+  sentence?: string;
 }
 
 /** Text selected inside an extension control belongs to the control. */
@@ -36,7 +37,20 @@ export function getSelectionInfo(): SelectionInfo | null {
   const rects = [...range.getClientRects()].filter((r) => r.width > 0 && r.height > 0);
   const rect = (rects[rects.length - 1] ?? range.getBoundingClientRect()) as DOMRect;
   if (!rect || rect.width === 0 || rect.height === 0) return null;
-  return { text, rect };
+  let sentence: string | undefined;
+  const block = range.startContainer.parentElement?.closest("p,li,blockquote,td,figcaption,h1,h2,h3,div");
+  if (block && text.length <= 80 && text.split(/\s+/).length <= 6 && block.contains(range.endContainer)) {
+    const before = range.cloneRange();
+    before.selectNodeContents(block);
+    before.setEnd(range.startContainer, range.startOffset);
+    const offset = before.toString().length;
+    const content = block.textContent ?? "";
+    const left = content.slice(Math.max(0, offset - 260), offset).split(/[.!?。！？\n]/).pop() ?? "";
+    const right = content.slice(offset + range.toString().length, offset + range.toString().length + 260).split(/[.!?。！？\n]/)[0];
+    sentence = normalizeText(left + range.toString() + right);
+    if (sentence === text) sentence = undefined;
+  }
+  return { text, rect, sentence };
 }
 
 export function clamp(value: number, min: number, max: number): number {

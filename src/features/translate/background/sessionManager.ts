@@ -7,10 +7,12 @@ import type { PageContext, PortOutbound, Segment, Settings, TranslatedItem } fro
 import { createId, normalizeText, toUserMessage } from "@shared/util";
 import { sanitizeSecrets } from "@features/translate/background/apiError";
 import type { PersistentCache } from "@features/translate/background/persistentCache";
-import { requestTranslation } from "@features/translate/background/translator";
+import { parseGlossary } from "@shared/prompt";
+import { requestDocumentGuide, requestTranslation, type DocumentGuide } from "@features/translate/background/translator";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_ATTEMPTS = 3;
+const documentGuides = new Map<string, DocumentGuide>();
 /** Size of the carved first batch — small so the first visible paragraphs paint fast. */
 const FIRST_PAINT_ITEMS = 3;
 
@@ -66,8 +68,27 @@ export class TranslationSession {
     this.context = pageContextOf(port);
   }
 
-  async start(rawSegments: Segment[]): Promise<void> {
+  async start(rawSegments: Segment[], sample = ""): Promise<void> {
     const settings = await loadSettings();
+    if (settings.engine === "model" && settings.endpoint && settings.consistentTerms && sample.length >= 1600 && !this.cancelled) {
+      const excerpt = sample.slice(0, 5500);
+      const identity = this.port.sender?.documentId || this.port.sender?.tab?.id;
+      const key = JSON.stringify([identity, this.context.title, settings.endpoint, settings.model, settings.protocol, settings.targetLang, settings.maskSensitive, excerpt]);
+      const controller = new AbortController();
+      this.controllers.add(controller);
+      try {
+        const guide = documentGuides.get(key) ?? await requestDocumentGuide(excerpt, settings, controller.signal);
+        if (this.cancelled) return;
+        if (documentGuides.size >= 16) documentGuides.delete(documentGuides.keys().next().value!);
+        documentGuides.set(key, guide);
+        this.context.topic = guide.topic;
+        const preferred = new Set(parseGlossary(settings.glossary).map(term => term.from.toLowerCase()));
+        const generated = parseGlossary(guide.glossary).filter(term => !preferred.has(term.from.toLowerCase()));
+        settings.glossary += generated.map(term => "\n" + term.from + "=" + term.to).join("");
+      } catch { /* A failed analysis must not prevent ordinary translation. */ }
+      finally { this.controllers.delete(controller); }
+    }
+    if (this.cancelled) return;
     this.settings = settings;
     this.concurrency = settings.maxConcurrency;
     this.cache.setMaxEntries(settings.cacheMaxEntries);
@@ -81,7 +102,7 @@ export class TranslationSession {
       settings: publicSettings(settings),
     });
 
-    if (!settings.endpoint || !settings.model) {
+    if (settings.engine !== "model" || !settings.endpoint || !settings.model) {
       this.fatal(t("toastNeedConfig"));
       return;
     }
@@ -148,6 +169,7 @@ export class TranslationSession {
       model: settings.model,
       targetLang: settings.targetLang,
       glossary: settings.glossary,
+      context: JSON.stringify(this.context),
     };
 
     // Normalize once, then hash all cache keys in parallel. This was a serial
@@ -410,6 +432,7 @@ export function pageContextOf(port: chrome.runtime.Port): PageContext {
   let host = "";
   try {
     const url = tab?.url ?? port.sender?.url ?? "";
+    if (url && !/^https?:/i.test(url)) return { title: "", host: "" };
     host = url ? new URL(url).hostname : "";
   } catch {
     host = "";

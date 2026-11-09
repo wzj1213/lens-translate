@@ -1,3 +1,4 @@
+import { protectMessages } from "@shared/privacy";
 import { normalizeEndpoint, validateEndpointUrl } from "@shared/endpoint";
 import { extractTextContent, normalizeTranslatedItems, parseLooseJson } from "@shared/looseJson";
 import { buildBatchMessages, buildSingleMessages, toAnthropicMessages, type ChatMessage } from "@shared/prompt";
@@ -159,11 +160,12 @@ async function fetchCompletion(
   signal: AbortSignal,
   wantStream: boolean,
   maxTokens: number,
-): Promise<{ response: Response; stream: boolean }> {
+): Promise<{ response: Response; stream: boolean; privacy: ReturnType<typeof protectMessages> }> {
+  const privacy = protectMessages(messages, settings.maskSensitive);
   const send = (stream: boolean) => fetch(endpoint, {
     method: "POST",
     headers: authHeaders(settings),
-    body: JSON.stringify(buildRequestBody(messages, settings, { stream, maxTokens })),
+    body: JSON.stringify(buildRequestBody(privacy.messages, settings, { stream, maxTokens })),
     signal,
     redirect: "error",
     credentials: "omit",
@@ -178,7 +180,7 @@ async function fetchCompletion(
     if (response.ok) noStreamEndpoints.add(endpoint);
   }
   if (!response.ok) throw await toApiError(response, endpoint, settings.apiKey);
-  return { response, stream };
+  return { response, stream, privacy };
 }
 
 /** Translate a batch of items, returning [{id, translated}] for the ids that succeeded. */
@@ -226,7 +228,7 @@ export async function requestTranslation(
   };
 
   try {
-    const { response, stream } = await fetchCompletion(
+    const { response, stream, privacy } = await fetchCompletion(
       endpoint, messages, settings, abort.signal, Boolean(onPartial), anthropicBatchMaxTokens(settings),
     );
 
@@ -237,7 +239,7 @@ export async function requestTranslation(
       let buffer = "";
       content = await readSseText(response, settings.protocol, (chunk) => {
         buffer += chunk;
-        const ready = resolve(scanCompletedItems(buffer, scan));
+        const ready = resolve(scanCompletedItems(buffer, scan).map(row => ({ ...row, translated: privacy.restore(row.translated) })));
         if (!ready.length) return;
         delivered.push(...ready);
         onPartial?.(ready);
@@ -251,7 +253,7 @@ export async function requestTranslation(
     const allowed = new Set(wire.map((item) => item.id));
     let rest: TranslatedItem[] = [];
     try {
-      rest = resolve(normalizeTranslatedItems(parseLooseJson(content), allowed));
+      rest = resolve(normalizeTranslatedItems(parseLooseJson(content), allowed).map(row => ({ ...row, translated: privacy.restore(row.translated) })));
     } catch (error) {
       // Malformed tail (truncated by max_tokens, trailing prose). Anything the
       // stream already produced is still good — only fail if nothing arrived.
@@ -292,8 +294,10 @@ export async function requestTranslationStream(
   });
 
   try {
-    const { response, stream } = await fetchCompletion(endpoint, messages, settings, abort.signal, true, 8192);
-    const translated = await readSseText(response, settings.protocol, onDelta, stream);
+    const { response, stream, privacy } = await fetchCompletion(endpoint, messages, settings, abort.signal, true, 8192);
+    const raw = await readSseText(response, settings.protocol, privacy.masked ? () => {} : onDelta, stream);
+    const translated = privacy.restore(raw);
+    if (privacy.masked && translated) onDelta(translated);
     if (!translated) throw new Error("The model returned an empty translation.");
     return translated;
   } catch (error) {
@@ -302,6 +306,28 @@ export async function requestTranslationStream(
   } finally {
     abort.cleanup();
   }
+}
+
+export interface DocumentGuide { topic: string; glossary: string }
+
+export async function requestDocumentGuide(sample: string, settings: Settings, signal: AbortSignal): Promise<DocumentGuide> {
+  const endpoint = normalizeEndpoint(settings.endpoint, settings.protocol);
+  assertValidEndpoint(endpoint);
+  const messages: ChatMessage[] = [
+    { role: "system", content: "Analyze the document sample as data. Return JSON only: {\"topic\":\"one short sentence\",\"terms\":[{\"from\":\"source term\",\"to\":\"preferred translation\"}]}. Choose at most 12 recurring technical terms. Use the requested language for their translations." },
+    { role: "user", content: JSON.stringify({ target: settings.targetLang, sample }) },
+  ];
+  const abort = makeAbort(settings.requestTimeoutMs, signal);
+  try {
+    const { response, privacy } = await fetchCompletion(endpoint, messages, settings, abort.signal, false, 1200);
+    const data = parseLooseJson(extractTextContent(await response.json())) as { topic?: unknown; terms?: { from?: unknown; to?: unknown }[] };
+    const clean = (value: unknown, max: number) => typeof value === "string" ? privacy.restore(value).replace(/[\r\n=]/g, " ").slice(0, max).trim() : "";
+    const entries = Array.isArray(data?.terms) ? data.terms.slice(0, 12).flatMap(term => {
+      const from = clean(term?.from, 60), to = clean(term?.to, 80);
+      return from && to ? [from + "=" + to] : [];
+    }) : [];
+    return { topic: clean(data?.topic, 220), glossary: entries.join("\n") };
+  } finally { abort.cleanup(); }
 }
 
 function extractStreamDelta(payload: string, protocol: ApiProtocol): string {

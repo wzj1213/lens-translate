@@ -9,10 +9,13 @@ import { createId } from "@shared/util";
 import { collectPrioritized } from "@features/translate/content/collect";
 import { ensureExtensionContext, formatContentError, isTopFrame } from "@content/env";
 import { FloatingBubble } from "@features/translate/content/bubble";
-import { translateFocusedInput } from "@features/translate/content/inputBox";
+import { CaptionTranslator } from "./captions";
+import { HoverTranslator } from "./hover";
+import { inputUndoKey, undoInput, translateFocusedInput } from "@features/translate/content/inputBox";
 import { setTranslateUiText, type ParaUnit } from "@features/translate/content/paragraphGrouper";
 import { Renderer } from "@features/translate/content/render";
 import { SelectionTranslator } from "@features/translate/content/selection";
+import { NativePageSession } from "./nativeSession";
 import { PageSession } from "@features/translate/content/session";
 import { addStyles, applyTheme, injectStyles } from "@content/styles";
 import { hideToast, showToast } from "@content/toast";
@@ -35,8 +38,12 @@ const isUserInitiated = (mode: SubmitMode): boolean => mode !== "auto";
 export class TranslatorApp {
   private settings: Settings | null = null;
   private readonly renderer = new Renderer();
+  private readonly captions = new CaptionTranslator();
+  private readonly hover = new HoverTranslator();
+  private sampleUrl = "";
+  private sample = "";
   private readonly selection = new SelectionTranslator();
-  private readonly bar = new SelectionBar(({ text, rect }) => this.selection.translateSelection(text, rect));
+  private readonly bar = new SelectionBar(({ text, rect, sentence }) => this.selection.translateSelection(text, rect, sentence));
   private readonly bubble = new FloatingBubble({
     onTranslate: () => this.togglePage(),
     onToggleAuto: () => void this.toggleAuto(),
@@ -50,7 +57,7 @@ export class TranslatorApp {
     onPass: (units) => this.translateUnits(units, "auto"),
   });
 
-  private session: PageSession | null = null;
+  private session: PageSession | NativePageSession | null = null;
   private sessionMode: SubmitMode = "manual";
   private busy = false;
   private autoActive = false;
@@ -62,6 +69,8 @@ export class TranslatorApp {
     injectStyles();
     addStyles("selection-bar", SELECTION_BAR_CSS);
     this.selection.init();
+    this.hover.init();
+    document.addEventListener("keydown", inputUndoKey, true);
     this.bar.init();
     chrome.storage.onChanged.addListener(this.onSettingsChanged);
     window.addEventListener("pagehide", this.onPageHide, true);
@@ -84,6 +93,9 @@ export class TranslatorApp {
     this.autoActive = false;
     this.bar.destroy();
     this.selection.destroy();
+    this.hover.destroy();
+    this.captions.stop();
+    document.removeEventListener("keydown", inputUndoKey, true);
     this.bubble.unmount();
     chrome.storage.onChanged.removeListener(this.onSettingsChanged);
     window.removeEventListener("pagehide", this.onPageHide, true);
@@ -112,7 +124,17 @@ export class TranslatorApp {
   }
 
   private applySettings(settings: Settings): void {
+    if (this.settings && (settings.engine !== this.settings.engine || settings.endpoint !== this.settings.endpoint)) {
+      this.stopSession();
+      this.selection.cancel();
+    }
+    if (this.settings && (settings.engine !== this.settings.engine || settings.targetLang !== this.settings.targetLang || settings.endpoint !== this.settings.endpoint ||
+        settings.model !== this.settings.model || settings.glossary !== this.settings.glossary)) {
+      this.captions.stop();
+      this.hover.clear();
+    }
     this.settings = settings;
+    this.hover.key = settings.hoverKey;
     this.bar.setMode(selectionModeFor(settings, location.href));
     applyTheme(settings.translationColor);
     setTranslateUiText(settings.translateUiText);
@@ -181,14 +203,20 @@ export class TranslatorApp {
       case "TOGGLE_DISPLAY_MODE":
         void this.toggleDisplayMode();
         return {};
+      case "TOGGLE_CAPTIONS":
+        return { captions: this.captions.toggle() };
       case "TRANSLATE_INPUT":
-        translateFocusedInput();
+        void translateFocusedInput();
+        return {};
+      case "UNDO_INPUT":
+        undoInput();
         return {};
       case "GET_STATUS":
         return {
           active: this.renderer.size > 0,
           translated: this.renderer.size,
           busy: this.busy,
+          captions: this.captions.active,
           auto: this.autoWanted(),
           displayMode: this.settings?.displayMode ?? "bilingual",
         };
@@ -282,7 +310,13 @@ export class TranslatorApp {
     }
 
     this.sessionMode = mode;
-    this.session = new PageSession(this.renderer, segments, {
+    const settings = this.settings!;
+    if (this.sampleUrl !== location.href) { this.sampleUrl = location.href; this.sample = ""; }
+    if (settings.consistentTerms && this.sample.length < 1600) {
+      this.sample = [this.sample, ...segments.map(segment => segment.text)].filter(Boolean).join("\n").slice(0, 5500);
+    }
+    const Session = settings.engine === "model" ? PageSession : NativePageSession;
+    this.session = new Session(this.renderer, segments, {
       onBusy: (busy) => {
         this.busy = busy;
         this.bubble.setBusy(busy);
@@ -320,7 +354,7 @@ export class TranslatorApp {
         showToast(msg, "error", 6000);
       },
       onSettings: (ps) => this.applyPublicSettings(ps),
-    });
+    }, { targetLang: settings.targetLang, sample: settings.consistentTerms ? this.sample : "" });
 
     if (mode === "manual") {
       showToast(this.text("toastSubmitted", [String(segments.length)]), "info", 3000);
@@ -364,6 +398,7 @@ export class TranslatorApp {
 
   private restoreOriginal(options: { silent?: boolean } = {}): void {
     this.stopSession();
+    this.hover.clear();
     this.renderer.restoreAll();
     document.querySelectorAll<HTMLElement>("[data-lens]").forEach((el) => {
       if (el.dataset.lensUi) return; // never strip markers off our own injected UI

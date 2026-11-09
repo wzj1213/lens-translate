@@ -1,27 +1,45 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { translateFocusedInput } from "@features/translate/content/inputBox";
-import type { SelectionOutbound } from "@shared/types";
+import { translateFocusedInput, undoInput } from "@features/translate/content/inputBox";
+import { translateText } from "@shared/translateText";
+import { DEFAULT_SETTINGS } from "@shared/constants";
 
-afterEach(() => vi.unstubAllGlobals());
+vi.mock("@shared/settings", () => ({ loadSettings: async () => ({ ...DEFAULT_SETTINGS, writingLang: "French" }) }));
+vi.mock("@shared/translateText", () => ({ translateText: vi.fn() }));
+afterEach(() => { vi.clearAllMocks(); document.body.replaceChildren(); });
 
-it("preserves edits made while an input translation is in flight", () => {
-  let receive!: (message: SelectionOutbound) => void;
-  const port = {
-    onMessage: { addListener: (listener: typeof receive) => { receive = listener; } },
-    postMessage: vi.fn(),
-    disconnect: vi.fn(),
-  };
-  vi.stubGlobal("chrome", { runtime: { id: "test", connect: () => port } });
+function draft(value: string) {
   const field = document.createElement("textarea");
   document.body.append(field);
-  field.focus();
-  field.value = "Original draft";
-  translateFocusedInput();
-  expect(port.postMessage).toHaveBeenCalledWith({ type: "TRANSLATE", text: "Original draft" });
+  field.focus(); field.value = value;
+  return field;
+}
+
+it("preserves edits made while an input translation is in flight", async () => {
+  let finish!: (text: string) => void;
+  vi.mocked(translateText).mockReturnValueOnce(new Promise(resolve => { finish = resolve; }));
+  const field = draft("Original draft");
+  const work = translateFocusedInput();
   field.value += " with edits";
-  receive({ type: "DONE", translated: "旧译文", fromCache: false });
+  finish("ancienne traduction"); await work;
   expect(field.value).toBe("Original draft with edits");
-  translateFocusedInput();
-  receive({ type: "DONE", translated: "新译文", fromCache: false });
-  expect(field.value).toBe("新译文");
+  expect(undoInput()).toBe(false);
+});
+
+it("uses the independent writing target and restores the exact draft", async () => {
+  const field = draft("  Hello there!  ");
+  vi.mocked(translateText).mockResolvedValueOnce("Bonjour !");
+  await translateFocusedInput();
+  expect(translateText).toHaveBeenCalledWith("Hello there!", expect.objectContaining({ targetLang: "French" }));
+  expect(field.value).toBe("Bonjour !");
+  expect(undoInput()).toBe(true);
+  expect(field.value).toBe("  Hello there!  ");
+});
+
+it("uses a one-shot language override without overwriting subsequent typing", async () => {
+  const field = draft("/ja See you tomorrow");
+  vi.mocked(translateText).mockResolvedValueOnce("また明日");
+  await translateFocusedInput();
+  expect(translateText).toHaveBeenCalledWith("See you tomorrow", expect.objectContaining({ targetLang: "ja" }));
+  field.value += "!";
+  expect(undoInput()).toBe(false);
 });

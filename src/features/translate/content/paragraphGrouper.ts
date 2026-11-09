@@ -1,3 +1,4 @@
+import { inReadingArea } from "./siteProfile";
 import { hasHumanText, looksLikeOnlyUrlOrSymbol, looksUntranslatable, normalizeText } from "@shared/util";
 
 /**
@@ -123,6 +124,7 @@ function getStyle(el: Element): CSSStyleDeclaration | null {
 }
 
 export function shouldSkipElement(el: Element | null): boolean {
+  if (el && !inReadingArea(el)) return true;
   for (let cur: Element | null = el; cur; cur = cur.parentElement) {
     if (SKIP_TAGS.has(cur.tagName)) return true;
     if (cur.getAttribute("aria-hidden") === "true") return true;

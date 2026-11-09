@@ -35,8 +35,16 @@
       <form id="settingsForm">
         <section class="panel" data-panel="access">
         <section class="card">
-          <h2 data-i18n="sectionApi">API</h2>
+          <h2 data-i18n="sectionApi">Translation engine</h2>
+          <p class="muted" data-i18n="nativeHint"></p>
           <div class="grid">
+          <label class="field span-2">
+            <span data-i18n="engineLabel">Active engine</span>
+            <select id="engine" name="engine">
+              <option value="chrome" data-i18n="useNative">Chrome on-device translation</option>
+              <option value="model" data-i18n="useModel">Configured model</option>
+            </select>
+          </label>
             <label class="field">
               <span data-i18n="labelProvider">Provider preset</span>
               <select id="provider" name="provider"></select>
@@ -74,6 +82,22 @@
               <span data-i18n="labelTargetLang">Target language</span>
               <input id="targetLang" name="targetLang" type="text" list="langList" autocomplete="off" />
               <datalist id="langList"></datalist>
+            </label>
+            <label class="field checkbox">
+              <input id="maskSensitive" name="maskSensitive" type="checkbox">
+              <span data-i18n="maskSensitive">Mask emails and phone numbers in provider requests</span>
+            </label>
+            <label class="field checkbox">
+              <input id="consistentTerms" name="consistentTerms" type="checkbox">
+              <span data-i18n="consistentTerms">Keep terminology consistent on long pages</span>
+            </label>
+            <label class="field">
+              <span data-i18n="writingLang">Writing language</span>
+              <input id="writingLang" name="writingLang" list="langList" autocomplete="off">
+            </label>
+            <label class="field">
+              <span data-i18n="hoverKey">Paragraph translation key</span>
+              <select id="hoverKey" name="hoverKey"><option value="Alt">Alt / Option</option><option value="Shift">Shift</option><option value="off" data-i18n="selectionToolbarOff">Off</option></select>
             </label>
             <label class="field checkbox">
               <input id="sourceSkip" name="sourceSkip" type="checkbox" />
@@ -243,6 +267,8 @@
           </ol>
           <h3 data-i18n="helpTipsTitle">Tips</h3>
           <ul>
+            <li data-i18n="helpMedia"></li>
+            <li data-i18n="helpWriting"></li>
             <li data-i18n="helpTipSites"></li>
             <li data-i18n="helpTipGlossary"></li>
             <li data-i18n="helpTipCache"></li>

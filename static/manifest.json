@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "description": "__MSG_extDescription__",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "default_locale": "en",
   "minimum_chrome_version": "114",
   "permissions": [
@@ -10,7 +10,8 @@
     "contextMenus",
     "scripting",
     "storage",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "sidePanel"
   ],
   "host_permissions": [
     "http://*/*",
@@ -75,5 +76,11 @@
     "show-selection-toolbar": {
       "description": "__MSG_cmdSelectionToolbar__"
     }
+  },
+  "side_panel": {
+    "default_path": "image.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   }
 }

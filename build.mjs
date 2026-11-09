@@ -1,5 +1,5 @@
 import * as esbuild from "esbuild";
-import { cp, mkdir, rm } from "node:fs/promises";
+import { cp, mkdir, readdir, rm } from "node:fs/promises";
 
 const watch = process.argv.includes("--watch");
 const dev = watch || process.argv.includes("--dev");
@@ -14,7 +14,7 @@ const base = {
   logLevel: "info",
 };
 const bundles = [
-  { ...base, format: "esm", entryPoints: { service_worker: "src/background/service_worker.ts" } },
+  { ...base, format: "esm", entryPoints: { service_worker: "src/background/service_worker.ts", reader: "src/reader/reader.ts" } },
   {
     ...base,
     format: "iife",
@@ -28,6 +28,10 @@ const bundles = [
 
 const assets = [
   ["LICENSE", "LICENSE"],
+  ["THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.md"],
+  ["src/reader/reader.html", "reader.html"],
+  ["src/reader/reader.html", "image.html"],
+  ["src/reader/reader.css", "reader.css"],
   ["static/manifest.json", "manifest.json"],
   ["static/_locales", "_locales"],
   ["static/icons", "icons"],
@@ -43,9 +47,32 @@ async function copyAssets() {
   }
 }
 
+async function copyReaderLibraries() {
+  const pdf = "node_modules/pdfjs-dist/";
+  const ocr = "node_modules/tesseract.js/";
+  const from = [
+    [pdf + "legacy/build/pdf.min.mjs", "pdf/pdf.mjs"],
+    [pdf + "legacy/build/pdf.worker.min.mjs", "pdf/pdf.worker.mjs"],
+    ...["LICENSE", "cmaps", "standard_fonts", "iccs"].map(name => [pdf + name, "pdf/" + name]),
+    ...((await readdir(pdf + "wasm")).filter(name => !name.toLowerCase().includes("quickjs"))
+      .map(name => [pdf + "wasm/" + name, "pdf/wasm/" + name])),
+    [ocr + "dist/worker.min.js", "ocr/worker.min.js"],
+    [ocr + "dist/worker.min.js.LICENSE.txt", "ocr/worker.min.js.LICENSE.txt"],
+    [ocr + "dist/tesseract.min.js.LICENSE.txt", "ocr/tesseract.min.js.LICENSE.txt"],
+    [ocr + "LICENSE.md", "ocr/LICENSE-tesseract.md"],
+    ["node_modules/tesseract.js-core/LICENSE", "ocr/LICENSE-core"],
+    ["node_modules/tesseract.js-core/tesseract-core-lstm.wasm.js", "ocr/tesseract-core-lstm.wasm.js"],
+    ...["eng", "chi_sim", "jpn"].map(lang => [
+      "node_modules/@tesseract.js-data/" + lang + "/4.0.0_best_int/" + lang + ".traineddata.gz",
+      "ocr/" + lang + ".traineddata.gz",
+    ]),
+  ];
+  for (const [source, target] of from) await cp(source, outdir + "/vendor/" + target, { recursive: true });
+}
+
 await rm(outdir, { recursive: true, force: true });
 await mkdir(outdir);
-await copyAssets();
+await Promise.all([copyAssets(), copyReaderLibraries()]);
 
 if (watch) {
   const contexts = await Promise.all(bundles.map((options) => esbuild.context(options)));

@@ -1,3 +1,4 @@
+import { openImage } from "./imageMenu";
 import { createCacheKey } from "@shared/cacheKey";
 import { normalizeEndpoint, validateEndpointUrl } from "@shared/endpoint";
 import { t } from "@shared/i18n";
@@ -34,6 +35,9 @@ const COMMAND_MAP: Record<string, ContentCommand> = {
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({ id: "lens-image", title: t("imageMenu"), contexts: ["image"] });
+    chrome.contextMenus.create({ id: "lens-write", title: t("cmdInput"), contexts: ["editable"] });
+    chrome.contextMenus.create({ id: "lens-undo", title: t("undoWriting"), contexts: ["editable"] });
     chrome.contextMenus.create({ id: "lens-page", title: t("cmdTogglePage"), contexts: ["page"] });
     chrome.contextMenus.create({
       id: "lens-selection",
@@ -50,13 +54,21 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (!tab?.id) return;
+  if (info.menuItemId === "lens-image") {
+    void openImage(info, tab).catch(error => console.warn("Could not open image reader", error));
+    return;
+  }
   const command = ({
+    "lens-write": "TRANSLATE_INPUT",
+    "lens-undo": "UNDO_INPUT",
     "lens-page": "TOGGLE_PAGE",
     "lens-selection": "TRANSLATE_SELECTION",
     "lens-selection-toolbar": "SHOW_SELECTION_TOOLBAR",
   } as Record<string, ContentCommand>)[info.menuItemId];
   if (command) void dispatchToTab(tab.id, command);
 });
+
+chrome.tabs.onRemoved.addListener(id => { void chrome.storage.session.remove("lensImage:" + id); });
 
 // --- Keyboard shortcuts ---
 
@@ -144,7 +156,7 @@ function handleSessionPort(port: chrome.runtime.Port): void {
 
   port.onMessage.addListener((message) => {
     if (message?.type === "START_TRANSLATION") {
-      session.start(message.segments ?? []).catch((error) => {
+      session.start(message.segments ?? [], typeof message.sample === "string" ? message.sample : "").catch((error) => {
         try {
           port.postMessage({ type: "FATAL_ERROR", message: toUserMessage(error) });
         } catch {
@@ -172,7 +184,7 @@ function handleSelectionPort(port: chrome.runtime.Port): void {
   port.onMessage.addListener((message: SelectionInbound) => {
     if (message?.type !== "TRANSLATE" || active) return;
     active = true;
-    void runSelection(port, message.text, controller.signal, context).finally(() => {
+    void runSelection(port, message, controller.signal, context).finally(() => {
       active = false;
     });
   });
@@ -182,7 +194,7 @@ function handleSelectionPort(port: chrome.runtime.Port): void {
 
 async function runSelection(
   port: chrome.runtime.Port,
-  rawText: string,
+  request: SelectionInbound,
   signal: AbortSignal,
   context: PageContext,
 ): Promise<void> {
@@ -195,8 +207,10 @@ async function runSelection(
   };
   try {
     const settings = await loadSettings();
-    const text = normalizeText(rawText);
-    if (!settings.endpoint || !settings.model) throw new Error(t("toastNeedConfig"));
+    const text = normalizeText(request.text);
+    if (request.targetLang) settings.targetLang = String(request.targetLang).slice(0, 80);
+    if (request.sentence) context = { ...context, sentence: normalizeText(String(request.sentence)).slice(0, 650) };
+    if (settings.engine !== "model" || !settings.endpoint || !settings.model) throw new Error(t("toastNeedConfig"));
     if (!text) throw new Error(t("toastNoText"));
 
     cache.setMaxEntries(settings.cacheMaxEntries);
@@ -206,6 +220,7 @@ async function runSelection(
       model: settings.model,
       targetLang: settings.targetLang,
       glossary: settings.glossary,
+      context: JSON.stringify(context),
     };
     const cacheKey = await createCacheKey(keyInput, text);
 

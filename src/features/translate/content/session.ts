@@ -27,6 +27,7 @@ export class PageSession {
     private readonly renderer: Renderer,
     private readonly segments: Segment[],
     private readonly handlers: SessionHandlers,
+    private readonly options: { targetLang: string; sample: string },
   ) {}
 
   start(): void {
@@ -35,7 +36,7 @@ export class PageSession {
     this.port.onMessage.addListener((message) => this.onMessage(message as PortOutbound));
     this.port.onDisconnect.addListener(() => this.onDisconnect());
     this.handlers.onBusy(true);
-    this.port.postMessage({ type: "START_TRANSLATION", segments: this.segments });
+    this.port.postMessage({ type: "START_TRANSLATION", segments: this.segments, sample: this.options.sample });
   }
 
   /**

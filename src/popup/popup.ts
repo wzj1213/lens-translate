@@ -9,6 +9,7 @@ const statusEl = byId("status");
 const COMMAND_BUTTONS: Record<string, ContentCommand> = {
   translatePage: "TOGGLE_PAGE",
   translateSelection: "TRANSLATE_SELECTION",
+  captions: "TOGGLE_CAPTIONS",
   restoreOriginal: "RESTORE_ORIGINAL",
   stopTranslation: "STOP_TRANSLATION",
   showSelectionToolbar: "SHOW_SELECTION_TOOLBAR",
@@ -30,11 +31,20 @@ async function init(): Promise<void> {
   host = hostFromUrl(tab?.url);
   render();
 
-  if (!settings.endpoint) setStatus(t("popupNeedSetup"), "info");
+  if (settings.engine === "chrome") setStatus(t("popupNeedSetup"), "info");
 
   for (const [id, command] of Object.entries(COMMAND_BUTTONS)) {
     byId(id).addEventListener("click", () => void sendCommand(command));
   }
+  byId("openReader").addEventListener("click", () => {
+    const url = tab?.url;
+    let reader = chrome.runtime.getURL("reader.html");
+    if (url && /^https?:/i.test(url) && /(?:\.pdf(?:$|[?#])|\/pdf\/[^?#]+)/i.test(url)) {
+      reader += "#" + new URLSearchParams({ pdf: url });
+    }
+    void chrome.tabs.create({ url: reader });
+    window.close();
+  });
   byId("toggleAuto").addEventListener("click", () => void toggleAuto());
   byId("toggleBubble").addEventListener("click", () => void toggleBubble());
   byId("openOptions").addEventListener("click", () => chrome.runtime.openOptionsPage());
@@ -50,6 +60,8 @@ async function init(): Promise<void> {
 
 /** Paint every control from the current settings — one render path, no drift. */
 function render(): void {
+  byId("captions").hidden = !/^(?:www\.|m\.)?youtube\.com$/.test(host) ||
+    !/^\/(?:watch(?:$|\?)|shorts\/)/.test((tab?.url || "").replace(/^https?:\/\/[^/]+/, ""));
   const auto = host ? isAutoOnFor(settings, host) : settings.autoTranslateEnabled;
   setSwitch(byId("toggleAuto"), auto);
   byId("autoScope").textContent = host || t("thisSite");
@@ -89,6 +101,7 @@ async function refreshPageState(): Promise<void> {
       command: "GET_STATUS",
     })) as (PageStatus & { ok: boolean }) | undefined;
     if (!status?.ok) return;
+    byId("captions").textContent = t(status.captions ? "captionsStop" : "captionsStart");
     const cta = byId("translatePage");
     if (status.busy) cta.textContent = t("translating");
     else if (status.active) cta.textContent = t("showOriginal");

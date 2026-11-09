@@ -1,8 +1,7 @@
 import { bcp47For } from "@shared/constants";
 import { t } from "@shared/i18n";
-import { SELECTION_PORT_NAME } from "@shared/messaging";
-import type { SelectionOutbound } from "@shared/types";
-import { ensureExtensionContext, formatContentError, onUserClick } from "@content/env";
+import { translateText } from "@shared/translateText";
+import { formatContentError, onUserClick } from "@content/env";
 import { injectStyles } from "@content/styles";
 import { getSelectionInfo, positionFloating } from "@content/selection-util";
 
@@ -10,7 +9,8 @@ export class SelectionTranslator {
   private panel: HTMLElement | null = null;
   private resultEl: HTMLElement | null = null;
   private footerEl: HTMLElement | null = null;
-  private port: chrome.runtime.Port | null = null;
+  private controller: AbortController | null = null;
+  private sentence?: string;
   private requestId = 0;
   private selectionText = "";
   private anchorRect: DOMRect | null = null;
@@ -28,6 +28,8 @@ export class SelectionTranslator {
     this.langTag = bcp47For(lang);
   }
 
+  cancel(): void { this.closePanel(); }
+
   destroy(): void {
     document.removeEventListener("keydown", this.onKeyDown, true);
     this.disconnectPort();
@@ -35,9 +37,10 @@ export class SelectionTranslator {
   }
 
   /** 工具条里的「翻译」动作，以及右键菜单 / 快捷键，都走这里 */
-  translateSelection(text: string, rect: DOMRect): void {
+  translateSelection(text: string, rect: DOMRect, sentence?: string): void {
     if (!text) return;
     this.selectionText = text;
+    this.sentence = sentence;
     this.anchorRect = rect;
     this.openAndTranslate();
   }
@@ -46,21 +49,14 @@ export class SelectionTranslator {
   translateCurrentSelection(): boolean {
     const info = getSelectionInfo();
     if (!info) return false;
-    this.translateSelection(info.text, info.rect);
+    this.translateSelection(info.text, info.rect, info.sentence);
     return true;
   }
-
-
-
 
   private onKeyDown_(event: KeyboardEvent): void {
     if (event.key !== "Escape" || !this.panel) return;
     this.closePanel();
   }
-
-
-
-
 
   private openAndTranslate(): void {
     const text = this.selectionText;
@@ -70,34 +66,19 @@ export class SelectionTranslator {
 
     const requestId = ++this.requestId;
     this.streamed = "";
-    try {
-      ensureExtensionContext();
-      this.disconnectPort();
-      const port = chrome.runtime.connect({ name: SELECTION_PORT_NAME });
-      this.port = port;
-      port.onMessage.addListener((message) => this.onPortMessage(message as SelectionOutbound, requestId));
-      port.onDisconnect.addListener(() => {
-        if (this.port === port) this.port = null;
-      });
-      port.postMessage({ type: "TRANSLATE", text });
-    } catch (error) {
-      this.setResult(formatContentError(error), "error");
-    }
-  }
-
-  private onPortMessage(message: SelectionOutbound, requestId: number): void {
-    if (requestId !== this.requestId) return;
-    if (message.type === "DELTA") {
-      this.streamed += message.chunk;
+    const controller = new AbortController();
+    this.controller = controller;
+    void translateText(text, { sentence: this.sentence, signal: controller.signal, onDelta: chunk => {
+      if (this.requestId !== requestId) return;
+      this.streamed += chunk;
       this.setResult(this.streamed, "result");
-    } else if (message.type === "DONE") {
-      this.setResult(message.translated, "result");
-      if (this.footerEl) this.footerEl.textContent = message.fromCache ? t("panelFromCache") : t("panelTranslated");
-      this.disconnectPort();
-    } else if (message.type === "ERROR") {
-      this.setResult(message.message, "error");
-      this.disconnectPort();
-    }
+    }}).then(translated => {
+      if (this.requestId !== requestId) return;
+      this.setResult(translated, "result");
+      if (this.footerEl) this.footerEl.textContent = t("panelTranslated");
+    }).catch(error => {
+      if (!controller.signal.aborted && this.requestId === requestId) this.setResult(formatContentError(error), "error");
+    });
   }
 
   private renderPanel(rect: DOMRect, sourceText: string, state: "loading" | "result"): void {
@@ -184,6 +165,7 @@ export class SelectionTranslator {
     } catch {
       /* not available */
     }
+    this.disconnectPort();
     this.panel?.remove();
     this.panel = null;
     this.resultEl = null;
@@ -191,13 +173,9 @@ export class SelectionTranslator {
   }
 
   private disconnectPort(): void {
-    if (!this.port) return;
-    try {
-      this.port.disconnect();
-    } catch {
-      /* already gone */
-    }
-    this.port = null;
+    this.requestId++;
+    this.controller?.abort();
+    this.controller = null;
   }
 }
 
@@ -210,10 +188,6 @@ function iconButton(label: string, onClick: () => void): HTMLButtonElement {
   onUserClick(button, onClick);
   return button;
 }
-
-
-
-
 
 async function copyToClipboard(text: string): Promise<boolean> {
   try {

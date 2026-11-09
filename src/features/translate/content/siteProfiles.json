@@ -1,0 +1,8 @@
+[
+  {
+    "host": "github.com",
+    "path": "^/[^/]+/[^/]+/(issues|pull)/[0-9]+(?:/|$)",
+    "include": ".markdown-body, .js-issue-title, [data-testid='issue-title'], [class*='IssueHeader'] h1, main h1, [role='main'] h1",
+    "exclude": "pre, code, .blob-code, .blob-num, .diff-table, [data-hunk], [data-testid='diff-view'], .js-file-content, .file-navigation, .highlight"
+  }
+]

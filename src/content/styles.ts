@@ -233,6 +233,13 @@ const CSS = `
 /* ============================================================================
    Selection panel — chrome is ink; the translated RESULT is the visual center.
    ============================================================================ */
+.lens-captions {
+  position:absolute; bottom:20%; left:50%; transform:translateX(-50%); z-index:55; max-width:86%;
+  background:rgba(0,0,0,.85); color:white; padding:.2em .55em; border-radius:4px;
+  white-space:pre-line; font:500 clamp(15px,2vw,30px)/1.35 system-ui; text-align:center; pointer-events:none;
+}
+.lens-captions[hidden] { display:none; }
+[data-lens-ui="hover"] { display:block; margin:.28em 0; color:var(--lens-tr,#0f766e); font-size:1em; }
 .lens-panel {
   position: fixed; z-index: 2147483647;
   width: min(380px, calc(100vw - 24px)); max-height: min(460px, calc(100vh - 24px));

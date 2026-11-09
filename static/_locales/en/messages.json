@@ -3,7 +3,7 @@
     "message": "Lens Translate"
   },
   "extDescription": {
-    "message": "Translate web pages and selections with your own AI provider. Read bilingually or enable automatic translation for individual sites."
+    "message": "Read bilingual web pages, captions, PDFs and images. Translate on your device with Chrome or connect your own AI model."
   },
   "actionTitle": {
     "message": "Lens Translate"
@@ -130,7 +130,7 @@
     "message": "Configure your translation provider, target language and reading preferences."
   },
   "sectionApi": {
-    "message": "API"
+    "message": "Translation engine"
   },
   "sectionTranslation": {
     "message": "Translation"
@@ -181,7 +181,7 @@
     "message": "Stored locally in this browser only and sent solely to your endpoint."
   },
   "labelTargetLang": {
-    "message": "Target language"
+    "message": "Reading language"
   },
   "labelSourceSkip": {
     "message": "Skip text already in the target language"
@@ -455,19 +455,19 @@
     "message": "Getting started"
   },
   "helpStep1": {
-    "message": "Under Access, choose a provider preset to fill in the protocol, endpoint and model. For a custom service, choose Custom and enter its API endpoint and model ID."
+    "message": "On desktop Chrome 138 or later, open an HTTPS page, click Translate this page and approve a language pack if prompted."
   },
   "helpStep2": {
-    "message": "Paste a key from your provider’s API dashboard. Leave this field blank for a local service that runs without authentication. To change the default target language, Simplified Chinese, open Translate."
+    "message": "For a cloud or local model, choose a provider under Connection, enter its details, test the connection and save."
   },
   "helpStep3": {
-    "message": "Click Test connection. When the sample translation appears, click Save settings and wait for the saved confirmation."
+    "message": "Select a word to see its meaning in the surrounding sentence. The browser engine translates the word and sentence separately."
   },
   "helpStep4": {
-    "message": "Open a page in a different language. Click the floating translation button or press Alt+T (Option+T on macOS). Press the shortcut again to restore the original."
+    "message": "Point at a paragraph and tap Alt or Option to translate just that paragraph. Tap again to remove the translation."
   },
   "helpStep5": {
-    "message": "To translate a passage, select it and click Translate selection, or press Alt+S (Option+S on macOS). Copy the result or use the read-aloud button."
+    "message": "Set separate reading and writing languages under Translate. Turn on auto-translation from the popup for sites you visit often."
   },
   "helpTipsTitle": {
     "message": "Tips"
@@ -485,10 +485,10 @@
     "message": "Shortcuts: Alt+T translate/restore page · Alt+S translate selection. Assign the rest at chrome://extensions/shortcuts."
   },
   "setupHint": {
-    "message": "Choose a provider and enter its credentials. Click Test connection, then Save settings when the sample translation appears."
+    "message": "Chrome translation is selected. Try it on a secure webpage or use Test connection to check this device."
   },
   "popupNeedSetup": {
-    "message": "Use the settings gear to configure a translation provider. Test the connection and save your settings."
+    "message": "Using Chrome on-device translation. Choose a model in Settings for more languages."
   },
   "labelPending": {
     "message": "Translating…"
@@ -540,5 +540,164 @@
   },
   "selectionToolbarDisabled": {
     "message": "The selection toolbar is off on this site. Choose Manual or Auto in the extension popup first."
+  },
+  "nativePack": {
+    "message": "Download the Chrome language pack for $FROM$ → $TO$?",
+    "placeholders": {
+      "from": {
+        "content": "$1"
+      },
+      "to": {
+        "content": "$2"
+      }
+    }
+  },
+  "nativeDownload": {
+    "message": "Download language pack"
+  },
+  "cancelAction": {
+    "message": "Cancel"
+  },
+  "nativeCancelled": {
+    "message": "Language pack download cancelled."
+  },
+  "nativeProgress": {
+    "message": "Downloading language pack… $PERCENT$%",
+    "placeholders": {
+      "percent": {
+        "content": "$1"
+      }
+    }
+  },
+  "nativeUnavailable": {
+    "message": "Chrome translation is unavailable here. Try a secure page in desktop Chrome 138+ or configure a model in Settings."
+  },
+  "nativePairUnavailable": {
+    "message": "Chrome cannot translate this language pair on this device. Choose another target or configure a model in Settings."
+  },
+  "inputRestored": {
+    "message": "Original draft restored."
+  },
+  "inputUndoHint": {
+    "message": "Draft translated. Press Esc to restore the original."
+  },
+  "undoWriting": {
+    "message": "Restore original draft"
+  },
+  "captionsVideoOnly": {
+    "message": "Open a YouTube video to use bilingual captions."
+  },
+  "captionsOn": {
+    "message": "Bilingual captions on. Turn on CC in the player if needed."
+  },
+  "captionsStart": {
+    "message": "Bilingual captions"
+  },
+  "captionsStop": {
+    "message": "Turn off bilingual captions"
+  },
+  "readerTitle": {
+    "message": "PDF & image reader"
+  },
+  "openReader": {
+    "message": "PDF & image reader"
+  },
+  "readerOpen": {
+    "message": "Open file"
+  },
+  "readerStart": {
+    "message": "Open a PDF to translate a paragraph, or an image to recognize its text."
+  },
+  "readerPrev": {
+    "message": "Previous page"
+  },
+  "readerNext": {
+    "message": "Next page"
+  },
+  "ocrLanguage": {
+    "message": "Text in the image"
+  },
+  "ocrRead": {
+    "message": "Recognize again"
+  },
+  "readerOriginal": {
+    "message": "Original text"
+  },
+  "readerTranslate": {
+    "message": "Translate text"
+  },
+  "readerResult": {
+    "message": "Translation"
+  },
+  "ocrProgress": {
+    "message": "Recognizing text… $PERCENT$%",
+    "placeholders": {
+      "percent": {
+        "content": "$1"
+      }
+    }
+  },
+  "ocrLoading": {
+    "message": "Reading the image on this device…"
+  },
+  "ocrEmpty": {
+    "message": "No text recognized. Try another image or recognition language."
+  },
+  "readerLoading": {
+    "message": "Opening document…"
+  },
+  "readerPick": {
+    "message": "Click a paragraph on the page to translate it."
+  },
+  "readerNoText": {
+    "message": "This page has no selectable text. For a scanned page, open a screenshot as an image."
+  },
+  "readerTooLarge": {
+    "message": "Choose a PDF under 100 MB or an image under 24 MB."
+  },
+  "readerUseFile": {
+    "message": "This resource could not be opened. Save it locally and choose Open file."
+  },
+  "imageStart": {
+    "message": "Right-click a webpage image and choose Read and translate image, or open an image file here."
+  },
+  "imageTitle": {
+    "message": "Image translation"
+  },
+  "imageMenu": {
+    "message": "Read and translate image"
+  },
+  "nativeHint": {
+    "message": "Chrome can translate supported languages on this device. To use an AI model instead, fill in the connection below and save."
+  },
+  "useNative": {
+    "message": "Chrome on-device translation"
+  },
+  "writingLang": {
+    "message": "Writing language"
+  },
+  "hoverKey": {
+    "message": "Paragraph translation key"
+  },
+  "maskSensitive": {
+    "message": "Mask email addresses and phone numbers before sending to a provider"
+  },
+  "consistentTerms": {
+    "message": "Generate a shared glossary for long pages (one extra model request)"
+  },
+  "helpMedia": {
+    "message": "On YouTube, enable CC and choose Bilingual captions in the popup. Find PDFs in PDF & image reader and use the context menu on images."
+  },
+  "helpWriting": {
+    "message": "Right-click an editable field to translate a draft. Start it with /ja and a space for Japanese. Esc restores the last replacement in that field."
+  },
+  "engineLabel": {
+    "message": "Active engine"
+  },
+  "useModel": {
+    "message": "Configured model"
+  },
+  "nativePackFailed": {
+    "message": "Chrome could not load this language pack. Check your connection and try again, or select a configured model in Settings."
   }
 }

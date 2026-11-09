@@ -37,14 +37,20 @@ function oneOf<T extends string>(list: readonly T[], value: unknown, fallback: T
 /** Pure: merge with defaults, clamp every numeric range, validate every enum. */
 export function normalizeSettings(raw: Partial<Settings> | null | undefined): Settings {
   const s = { ...DEFAULT_SETTINGS, ...(raw ?? {}) };
+  const endpoint = String(s.endpoint ?? "").trim();
   const prefetch = Number(s.autoTranslatePrefetchScreens);
   return {
     provider: oneOf(PROVIDERS, s.provider, "custom"),
     protocol: oneOf(PROTOCOLS, s.protocol, "openai"),
-    endpoint: String(s.endpoint ?? "").trim(),
+    engine: oneOf(["chrome", "model"] as const, raw?.engine, endpoint ? "model" : "chrome"),
+    endpoint,
     apiKey: String(s.apiKey ?? "").trim(),
     model: String(s.model ?? "").trim() || DEFAULT_SETTINGS.model,
     targetLang: String(s.targetLang ?? "").trim() || DEFAULT_SETTINGS.targetLang,
+    writingLang: String(s.writingLang || DEFAULT_SETTINGS.writingLang).trim().slice(0, 80) || DEFAULT_SETTINGS.writingLang,
+    maskSensitive: s.maskSensitive !== false,
+    consistentTerms: s.consistentTerms !== false,
+    hoverKey: oneOf(["Alt", "Shift", "off"] as const, s.hoverKey, "Alt"),
     sourceSkip: s.sourceSkip !== false,
     translateUiText: s.translateUiText !== false,
     glossary: String(s.glossary ?? ""),
